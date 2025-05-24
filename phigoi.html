@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tính phụ phí phí gói</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    form {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .input-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .input-group button {
+      padding: 4px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 32px;
+      height: 32px;
+    }
+    .input-group button:hover {
+      background-color: #0056b3;
+    }
+    .input-group input[type="number"] {
+      width: 40px;
+      height: 28px;
+      font-size: 15px;
+      text-align: center;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      -moz-appearance: textfield;
+    }
+    .input-group input[type=number]::-webkit-outer-spin-button,
+    .input-group input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .submit {
+      width: 100%;
+      padding: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+    .submit:hover {
+      background-color: #218838;
+    }
+    .result {
+      margin-top: 24px;
+      max-width: 480px;
+      background: #e6f7e6;
+      padding: 16px;
+      border-left: 5px solid #28a745;
+      font-weight: 600;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .form-link {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .form-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .form-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tính phụ phí phí gói</h1>
+
+  <form id="feeForm">
+    <label>Set của artist Py:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('artist', -1)">-</button>
+        <input type="number" id="artist" min="0">
+        <button type="button" onclick="changeValue('artist', 1)">+</button>
+      </div>
+    </label>
+    <label>Set 5 key từng mem của art HLE níu nhau:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('key5', -1)">-</button>
+        <input type="number" id="key5" min="0">
+        <button type="button" onclick="changeValue('key5', 1)">+</button>
+      </div>
+    </label>
+    <label>Set 2 key Wangpy và Gweus:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('wangpy', -1)">-</button>
+        <input type="number" id="wangpy" min="0">
+        <button type="button" onclick="changeValue('wangpy', 1)">+</button>
+      </div>
+    </label>
+    <label>Set 2 key Zeus mũ gấu:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('zeus', -1)">-</button>
+        <input type="number" id="zeus" min="0">
+        <button type="button" onclick="changeValue('zeus', 1)">+</button>
+      </div>
+    </label>
+    <label>Key chuỗi HLE níu nhau
+      <div class="input-group">
+        <button type="button" onclick="changeValue('hleKey', -1)">-</button>
+        <input type="number" id="hleKey" min="0">
+        <button type="button" onclick="changeValue('hleKey', 1)">+</button>
+      </div>
+    </label>
+    <label>Set 5 key HLE onstream:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('hleStream', -1)">-</button>
+        <input type="number" id="hleStream" min="0">
+        <button type="button" onclick="changeValue('hleStream', 1)">+</button>
+      </div>
+    </label>
+    <label>Set 4 key Wangho Breakfast:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('wangho', -1)">-</button>
+        <input type="number" id="wangho" min="0">
+        <button type="button" onclick="changeValue('wangho', 1)">+</button>
+      </div>
+    </label>
+    <button type="button" class="submit" onclick="calculateFee()">Tính phí</button>
+  </form>
+
+  <div class="result" id="result" style="display:none;"></div>
+  <div class="form-link" id="formLink" style="display:none;">
+    <a href="https://forms.gle/iLGSPoJWb46t1G6NA" target="_blank">LINK FORM PPPG VÀ THÔNG TIN SHIP</a>
+  </div>
+
+  <script>
+    function changeValue(id, delta) {
+      const input = document.getElementById(id);
+      let value = parseInt(input.value) || 0;
+      value += delta;
+      if (value < 0) value = 0;
+      input.value = value;
+    }
+
+    function calculateFee() {
+      const getValue = id => {
+        const val = document.getElementById(id).value;
+        return val === '' ? 0 : parseInt(val);
+      };
+
+      const artist = getValue('artist');
+      const key5 = getValue('key5');
+      const wangpy = getValue('wangpy');
+      const zeus = getValue('zeus');
+      const hleKey = getValue('hleKey');
+      const hleStream = getValue('hleStream');
+      const wangho = getValue('wangho');
+
+      const inputs = [artist, key5, wangpy, zeus, hleKey, hleStream, wangho];
+
+      if (inputs.some(x => isNaN(x) || x < 0)) {
+        alert("Vui lòng nhập số hợp lệ vào tất cả các ô input.");
+        return;
+      }
+
+      if (inputs.every(x => x === 0)) {
+        document.getElementById("result").style.display = 'block';
+        document.getElementById("result").innerText = `Tổng phí gói: 0 VND`;
+        document.getElementById("formLink").style.display = 'none';
+        return;
+      }
+
+      const totalFee = artist * 800 + key5 * 250 + wangpy * 100 + zeus * 100 + hleKey * 50 + hleStream * 250 + wangho * 200;
+      const totalKeys = artist * 16 + key5 * 5 + wangpy * 2 + zeus * 2 + hleKey * 1 + hleStream * 5 + wangho * 4;
+
+      let boxFee = 0;
+      if (totalKeys < 10) {
+        boxFee = 1300;
+      } else if (totalKeys < 20) {
+        boxFee = 1800;
+      } else {
+        boxFee = 1900;
+      }
+
+      const finalFee = totalFee + boxFee + 150;
+      document.getElementById("result").style.display = 'block';
+      document.getElementById("result").innerText = `Tổng phụ phí phí gói: ${finalFee.toLocaleString()} VND`;
+      document.getElementById("formLink").style.display = 'block';
+    }
+  </script>
+</body>
+</html>
