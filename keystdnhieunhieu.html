@@ -121,39 +121,39 @@
         <button type="button" onclick="changeValue('keyZeus', 1)">+</button>
       </div>
     </label>
-    <label>Key và std Anh bơ sói:
+    <label>Key + Std Anh bơ sói:
       <div class="input-group">
-        <button type="button" onclick="changeValue('wolfSet', -1)">-</button>
-        <input type="number" id="wolfSet" min="0">
-        <button type="button" onclick="changeValue('wolfSet', 1)">+</button>
+        <button type="button" onclick="changeValue('stdWolf', -1)">-</button>
+        <input type="number" id="stdWolf" min="0">
+        <button type="button" onclick="changeValue('stdWolf', 1)">+</button>
       </div>
     </label>
-    <label>Key và std Zeus bunny:
+    <label>Key + Std Zeus bunny:
       <div class="input-group">
-        <button type="button" onclick="changeValue('bunnySet', -1)">-</button>
-        <input type="number" id="bunnySet" min="0">
-        <button type="button" onclick="changeValue('bunnySet', 1)">+</button>
+        <button type="button" onclick="changeValue('stdBunny', -1)">-</button>
+        <input type="number" id="stdBunny" min="0">
+        <button type="button" onclick="changeValue('stdBunny', 1)">+</button>
       </div>
     </label>
-    <label>Key và std Khủng long Gon Ú:
+    <label>Key + Std Khủng long Gon Ú:
       <div class="input-group">
-        <button type="button" onclick="changeValue('dinoSet', -1)">-</button>
-        <input type="number" id="dinoSet" min="0">
-        <button type="button" onclick="changeValue('dinoSet', 1)">+</button>
+        <button type="button" onclick="changeValue('stdDino', -1)">-</button>
+        <input type="number" id="stdDino" min="0">
+        <button type="button" onclick="changeValue('stdDino', 1)">+</button>
       </div>
     </label>
-    <label>Key và std Công túa bế Mèo Bưới:
+    <label>Key + Std Công túa bế Mèo Bưới:
       <div class="input-group">
-        <button type="button" onclick="changeValue('princessSet', -1)">-</button>
-        <input type="number" id="princessSet" min="0">
-        <button type="button" onclick="changeValue('princessSet', 1)">+</button>
+        <button type="button" onclick="changeValue('stdPrincess', -1)">-</button>
+        <input type="number" id="stdPrincess" min="0">
+        <button type="button" onclick="changeValue('stdPrincess', 1)">+</button>
       </div>
     </label>
-    <label>Set 4 key HLE hiphop:
+    <label>Set 4 key HLE Hiphop:
       <div class="input-group">
-        <button type="button" onclick="changeValue('hiphopSet', -1)">-</button>
-        <input type="number" id="hiphopSet" min="0">
-        <button type="button" onclick="changeValue('hiphopSet', 1)">+</button>
+        <button type="button" onclick="changeValue('setHiphop', -1)">-</button>
+        <input type="number" id="setHiphop" min="0">
+        <button type="button" onclick="changeValue('setHiphop', 1)">+</button>
       </div>
     </label>
 
@@ -166,8 +166,7 @@
     function changeValue(id, delta) {
       const input = document.getElementById(id);
       let value = parseInt(input.value) || 0;
-      value += delta;
-      if (value < 0) value = 0;
+      value = Math.max(0, value + delta);
       input.value = value;
     }
 
@@ -180,43 +179,45 @@
       const notePeanut = getValue('notePeanut');
       const noteZeus = getValue('noteZeus');
       const keyZeus = getValue('keyZeus');
+      const stdWolf = getValue('stdWolf');
+      const stdBunny = getValue('stdBunny');
+      const stdDino = getValue('stdDino');
+      const stdPrincess = getValue('stdPrincess');
+      const setHiphop = getValue('setHiphop');
 
-      const wolfSet = getValue('wolfSet');
-      const bunnySet = getValue('bunnySet');
-      const dinoSet = getValue('dinoSet');
-      const princessSet = getValue('princessSet');
-      const hiphopSet = getValue('hiphopSet');
+      const allValues = [notePeanut, noteZeus, keyZeus, stdWolf, stdBunny, stdDino, stdPrincess, setHiphop];
 
-      const allValues = [notePeanut, noteZeus, keyZeus, wolfSet, bunnySet, dinoSet, princessSet, hiphopSet];
       if (allValues.some(x => isNaN(x) || x < 0)) {
         alert("Vui lòng nhập số hợp lệ vào tất cả các ô input.");
+        return;
+      }
+
+      const totalItems = allValues.reduce((sum, val) => sum + val, 0);
+
+      if (totalItems === 0) {
+        document.getElementById("result").style.display = 'block';
+        document.getElementById("result").innerText = `Tổng phụ phí phí gói: 0 VND`;
         return;
       }
 
       const noteFee = 205 * (notePeanut + noteZeus);
       const keyFee = (205 + 50) * keyZeus;
 
-      const stdFee = 130 * (wolfSet + bunnySet + dinoSet + princessSet);
-      const stdBag = 240 * (wolfSet + bunnySet + dinoSet + princessSet);
+      const stdSetTotal = stdWolf + stdBunny + stdDino + stdPrincess;
+      const stdSetFee = 130 * stdSetTotal + 240 * stdSetTotal;
 
-      const hiphopFee = 520 * hiphopSet;
-      const hiphopBag = 180 * hiphopSet;
+      const hiphopFee = 520 * setHiphop + 180 * setHiphop;
 
       const baseFee = 500;
 
-      const stdSetTotal = wolfSet + bunnySet + dinoSet + princessSet;
-      const totalItems = notePeanut + noteZeus + keyZeus + stdSetTotal + hiphopSet;
-
-      const hasStdSet = stdSetTotal > 0;
-      let boxFee;
-
-      if (hasStdSet) {
+      let boxFee = 0;
+      if (stdSetTotal > 0) {
         boxFee = totalItems < 3 ? 1450 : 1800;
       } else {
         boxFee = totalItems < 5 ? 1450 : 1800;
       }
 
-      const finalFee = baseFee + noteFee + keyFee + stdFee + stdBag + hiphopFee + hiphopBag + boxFee;
+      const finalFee = baseFee + noteFee + keyFee + stdSetFee + hiphopFee + boxFee;
 
       document.getElementById("result").style.display = 'block';
       document.getElementById("result").innerText = `Tổng phụ phí phí gói: ${finalFee.toLocaleString()} VND`;
