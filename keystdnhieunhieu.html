@@ -156,6 +156,13 @@
         <button type="button" onclick="changeValue('setHiphop', 1)">+</button>
       </div>
     </label>
+    <label>Key Zeus áo dài và hoa sen:
+      <div class="input-group">
+        <button type="button" onclick="changeValue('keyAoDaiSen', -1)">-</button>
+        <input type="number" id="keyAoDaiSen" min="0">
+        <button type="button" onclick="changeValue('keyAoDaiSen', 1)">+</button>
+      </div>
+    </label>
 
     <button type="button" class="submit" onclick="calculateFee()">Tính phí</button>
   </form>
@@ -184,8 +191,9 @@
       const stdDino = getValue('stdDino');
       const stdPrincess = getValue('stdPrincess');
       const setHiphop = getValue('setHiphop');
+      const keyAoDaiSen = getValue('keyAoDaiSen');
 
-      const allValues = [notePeanut, noteZeus, keyZeus, stdWolf, stdBunny, stdDino, stdPrincess, setHiphop];
+      const allValues = [notePeanut, noteZeus, keyZeus, stdWolf, stdBunny, stdDino, stdPrincess, setHiphop, keyAoDaiSen];
 
       if (allValues.some(x => isNaN(x) || x < 0)) {
         alert("Vui lòng nhập số hợp lệ vào tất cả các ô input.");
@@ -208,6 +216,8 @@
 
       const hiphopFee = 520 * setHiphop + 180 * setHiphop;
 
+      const aoDaiSenFee = 560 * keyAoDaiSen + 240 * keyAoDaiSen;
+
       const baseFee = 500;
 
       let boxFee = 0;
@@ -217,7 +227,7 @@
         boxFee = totalItems < 5 ? 1450 : 1800;
       }
 
-      const finalFee = baseFee + noteFee + keyFee + stdSetFee + hiphopFee + boxFee;
+      const finalFee = baseFee + noteFee + keyFee + stdSetFee + hiphopFee + aoDaiSenFee + boxFee;
 
       document.getElementById("result").style.display = 'block';
       document.getElementById("result").innerText = `Tổng phụ phí phí gói: ${finalFee.toLocaleString()} VND`;
