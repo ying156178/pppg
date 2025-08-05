@@ -122,6 +122,11 @@
       </div>
     </label>
 
+    <label style="margin-top: 10px; font-weight: normal;">
+      <input type="checkbox" id="directDeal" style="margin-right: 8px;">
+      Giao dịch trực tiếp (không tính phí gói)
+    </label>
+
     <button type="button" class="submit" onclick="calculateMirrorFee()">Tính phí</button>
   </form>
 
@@ -144,6 +149,7 @@
       const mirrorPeanut = getValue('mirrorPeanut');
       const mirrorZeus = getValue('mirrorZeus');
       const acrylicGwen = getValue('acrylicGwen');
+      const isDirect = document.getElementById('directDeal').checked;
 
       const allValues = [mirrorPeanut, mirrorZeus, acrylicGwen];
       if (allValues.some(x => isNaN(x) || x < 0)) {
@@ -152,10 +158,20 @@
       }
 
       const mirrorTotal = mirrorPeanut + mirrorZeus;
-      const mirrorFee = mirrorTotal * 2500;
-      const acrylicFee = acrylicGwen * 300;
+      const acrylicTotal = acrylicGwen;
+      const totalItems = mirrorTotal + acrylicTotal;
 
-      const packagingFee = 1500 + 700; // hộp + phụ kiện
+      const mirrorFee = mirrorTotal * 2500;
+      const acrylicFee = acrylicTotal * 300;
+
+      let packagingFee = 0;
+      if (!isDirect) {
+        if (totalItems >= 5) {
+          packagingFee = 1500 * 2 + 700; // 2 hộp + keo mực
+        } else {
+          packagingFee = 1500 + 700; // 1 hộp + keo mực
+        }
+      }
 
       const finalFee = mirrorFee + acrylicFee + packagingFee;
 
