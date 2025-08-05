@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tính phụ phí gương & acrylic</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -69,6 +69,23 @@
       -webkit-appearance: none;
       margin: 0;
     }
+    .checkbox-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      font-weight: 500;
+      margin: 0;
+      flex-direction: row;
+    }
     .submit {
       width: 100%;
       padding: 8px;
@@ -122,10 +139,10 @@
       </div>
     </label>
 
-    <label style="margin-top: 10px; font-weight: normal;">
-      <input type="checkbox" id="directDeal" style="margin-right: 8px;">
-      Giao dịch trực tiếp (không tính phí gói)
-    </label>
+    <div class="checkbox-group">
+      <input type="checkbox" id="directDeal">
+      <label for="directDeal">Giao dịch trực tiếp (không tính phí gói)</label>
+    </div>
 
     <button type="button" class="submit" onclick="calculateMirrorFee()">Tính phí</button>
   </form>
@@ -167,7 +184,7 @@
       let packagingFee = 0;
       if (!isDirect) {
         if (totalItems >= 5) {
-          packagingFee = 1500 * 2 + 700; // 2 hộp + keo mực
+          packagingFee = 1500 * 2 + 600; // 2 hộp + keo mực
         } else {
           packagingFee = 1500 + 700; // 1 hộp + keo mực
         }
