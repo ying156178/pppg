@@ -7,19 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0f172a; /* slate-900 */
-      --card:#111827ee; /* gray-900 */
-      --text:#e5e7eb; /* gray-200 */
-      --muted:#94a3b8; /* slate-400 */
-      --accent:#7c3aed; /* violet-600 */
-      --accent-2:#22d3ee; /* cyan-400 */
+      --bg:#0f172a;
+      --card:#111827ee;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#7c3aed;
+      --accent-2:#22d3ee;
       --error:#ef4444;
       --ok:#10b981;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin:0; font-family: 'Montserrat', system-ui, sans-serif;
       background: radial-gradient(1200px 800px at 10% -10%, #1f2937 0%, transparent 60%),
                   radial-gradient(900px 600px at 110% 10%, #0ea5e9 0%, transparent 45%),
                   linear-gradient(180deg, #0b1020 0%, #0f172a 60%);
@@ -33,7 +33,7 @@
       border-radius:24px; padding:28px; box-shadow: 0 10px 40px rgba(0,0,0,0.35);
       backdrop-filter: blur(6px);
     }
-    h1{font-size:clamp(22px, 2.8vw, 32px); margin:0 0 6px; font-weight:700; letter-spacing:0.3px}
+    h1{font-size:clamp(22px, 2.8vw, 32px); margin:0 0 6px; font-weight:700}
     .sub{color:var(--muted); margin-bottom:22px; font-size:14px}
     form{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px}
     .field{position:relative; flex:1 1 320px}
@@ -45,7 +45,7 @@
     button{
       padding:14px 18px; border-radius:14px; border:1px solid rgba(255,255,255,0.1);
       background:linear-gradient(90deg, var(--accent), var(--accent-2)); color:white; font-weight:700; cursor:pointer;
-      letter-spacing:.2px; transition: transform .05s ease-in-out, filter .15s;
+      transition: transform .05s ease-in-out, filter .15s;
     }
     button:active{ transform: translateY(1px) }
     .hint{font-size:12px; color:var(--muted); margin-top:6px}
@@ -63,13 +63,21 @@
     .divider{ height:1px; background:rgba(255,255,255,0.08); margin:14px 0 }
     .footer{ margin-top:16px; display:flex; justify-content:space-between; gap:10px; align-items:center }
     .hide{ display:none }
+    .progressBar{
+      width:100%; height:16px; border-radius:999px;
+      background:rgba(255,255,255,0.07); overflow:hidden; margin-bottom:6px;
+    }
+    .progressFill{
+      height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition:width .4s ease;
+    }
     @media (max-width:520px){ .label{ min-width:120px } }
   </style>
 </head>
 <body>
   <main class="card">
     <h1>Tra cứu đơn doll theo SĐT</h1>
-    <div class="sub">Nhập <strong>số điện thoại</strong> của bạn để xem thông tin đã đăng ký (Google Sheets công khai).</div>
+    <div class="sub">Nhập <strong>số điện thoại</strong> của bạn để xem thông tin đã đăng ký.</div>
 
     <form id="lookupForm">
       <div class="field">
@@ -93,20 +101,25 @@
           </div>
         </div>
       </div>
-      <div id="multiNote" class="small hide">Có nhiều dòng khớp SĐT của bạn, hệ thống đã <strong>gộp số lượng</strong> theo tất cả dòng khớp.</div>
+      <div id="multiNote" class="small hide">Có nhiều dòng khớp SĐT của bạn, hệ thống đã <strong>gộp số lượng</strong>.</div>
+
+      <!-- Thanh tiến độ -->
+      <div class="divider"></div>
+      <div class="small" style="margin-bottom:6px">Tiến độ chuyển khoản</div>
+      <div class="progressBar">
+        <div class="progressFill" id="progressFill"></div>
+      </div>
+      <div class="small" id="progressText">0 / 50 doll</div>
     </section>
 
     <div class="footer small">
-      <a href="#" id="refreshBtn" class="small" style="color:#a5b4fc">Làm mới dữ liệu</a>
+      <a href="#" id="refreshBtn" style="color:#a5b4fc">Làm mới dữ liệu</a>
     </div>
   </main>
 
   <script>
-    // URL CSV công khai của sheet (đã publish): đổi 'pubhtml' -> 'pub?output=csv'
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8BbOZIGFLYc5iqesG38ysAG8tOXDNqFzjLmodFIrYyIImc4xwLwapjJRIlM2sYT2NI3KKCp4V9BRs/pub?gid=115418440&single=true&output=csv';
-
     const state = { rows: [], header: [] };
-
     const el = (id)=>document.getElementById(id);
     const statusEl = el('status');
 
@@ -115,34 +128,26 @@
       statusEl.className = `status small ${type}`.trim();
     }
 
-    // CSV parser tối giản (hỗ trợ trường có dấu phẩy trong dấu ngoặc kép)
     function parseCSV(text){
-      const rows=[]; let cur=['']; let inQuotes=false; let i=0;
+      const rows=[]; let cur=['']; let inQuotes=false;
       for(const ch of text){
-        if(ch==='"'){
-          inQuotes = !inQuotes; // toggle khi gặp " (đơn giản hoá: không xử lý escape ")
-        }else if(ch===',' && !inQuotes){
-          cur.push('');
-        }else if((ch==='\n' || ch==='\r') && !inQuotes){
+        if(ch==='"'){ inQuotes = !inQuotes; }
+        else if(ch===',' && !inQuotes){ cur.push(''); }
+        else if((ch==='\n' || ch==='\r') && !inQuotes){
           if(cur.length>1 || cur[0].trim()!=='') rows.push(cur);
           cur=[''];
-        }else{
-          cur[cur.length-1]+=ch;
-        }
+        }else{ cur[cur.length-1]+=ch; }
       }
       if(cur.length>1 || cur[0].trim()!=='') rows.push(cur);
-      // Trim BOM & khoảng trắng
       return rows.map(r=>r.map(c=>c.replace(/^\ufeff/,'').trim()));
     }
 
     function normalizePhone(raw){
       if(!raw) return '';
-      let digits = String(raw).replace(/\D+/g,''); // chỉ còn 0-9
-      // Nếu bắt đầu 84 và tiếp theo là 9-10 số, chuyển về 0 + phần còn lại
+      let digits = String(raw).replace(/\D+/g,'');
       if(digits.startsWith('84') && digits.length>=10){
         digits = '0' + digits.slice(2);
       }
-      // Cắt còn tối đa 10-11 số (để loại mã quốc gia dài)
       if(digits.length>11) digits = digits.slice(-11);
       return digits;
     }
@@ -169,7 +174,6 @@
       if(!q){ return { matches:[], sumE:0, sumF:0, names:[] }; }
       const matches=[];
       for(const row of state.rows){
-        // Cột B (SĐT), C (FB), E (doll không xương), F (doll có xương)
         const phone = normalizePhone(row[1] || '');
         if(!phone) continue;
         if(phone === q || phone.endsWith(q) || q.endsWith(phone)){
@@ -197,18 +201,25 @@
 
       if(matches.length===0){
         result.classList.remove('show');
-        setStatus('Không tìm thấy dữ liệu cho SĐT đã nhập. Vui lòng kiểm tra lại.', 'error');
+        setStatus('Không tìm thấy dữ liệu cho SĐT đã nhập.', 'error');
         return;
       }
 
+      const totalDoll = sumE + sumF;
       fbName.textContent = names.length ? names.join(', ') : '—';
-      total.textContent = (sumE + sumF).toString();
+      total.textContent = totalDoll.toString();
       noBone.textContent = `${sumE} doll không xương`;
       withBone.textContent = `${sumF} doll có xương`;
       multiNote.classList.toggle('hide', matches.length<=1);
 
+      const progressFill = el('progressFill');
+      const progressText = el('progressText');
+      const percent = Math.min(100, (totalDoll/50)*100);
+      progressFill.style.width = percent + '%';
+      progressText.textContent = `${totalDoll} / 50 doll`;
+
       result.classList.add('show');
-      setStatus(`Tìm thấy ${matches.length} dòng khớp SĐT.`, 'ok');
+      setStatus(`Tìm thấy ${matches.length} dòng khớp.`, 'ok');
     }
 
     document.getElementById('lookupForm').addEventListener('submit', (e)=>{
@@ -223,7 +234,6 @@
       loadSheet();
     });
 
-    // Khởi động
     loadSheet();
   </script>
 </body>
