@@ -2,235 +2,194 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tra cứu đơn doll theo SĐT</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tra cứu doll CK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
-    :root{
-      --bg:#0f172a;
-      --card:#111827ee;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --accent:#7c3aed;
-      --accent-2:#22d3ee;
-      --error:#ef4444;
-      --ok:#10b981;
+    :root {
+      --bg: #0f0f1a;
+      --card: #1a1a2e;
+      --accent: #a78bfa;
+      --accent-2: #34d399;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: 'Montserrat', system-ui, sans-serif;
-      background: radial-gradient(1200px 800px at 10% -10%, #1f2937 0%, transparent 60%),
-                  radial-gradient(900px 600px at 110% 10%, #0ea5e9 0%, transparent 45%),
-                  linear-gradient(180deg, #0b1020 0%, #0f172a 60%);
-      color:var(--text);
-      display:flex; align-items:center; justify-content:center; padding:24px;
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: 'Montserrat', sans-serif;
+      background: var(--bg); color: var(--text);
+      display: flex; justify-content: center; padding: 20px;
     }
-    .card{
-      width:min(860px, 100%);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.08);
-      border-radius:24px; padding:28px; box-shadow: 0 10px 40px rgba(0,0,0,0.35);
-      backdrop-filter: blur(6px);
+    main {
+      width: 100%; max-width: 500px;
+      background: var(--card); padding: 20px;
+      border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.4);
     }
-    h1{font-size:clamp(22px, 2.8vw, 32px); margin:0 0 6px; font-weight:700}
-    .sub{color:var(--muted); margin-bottom:22px; font-size:14px}
-    form{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px}
-    .field{position:relative; flex:1 1 320px}
-    input[type="tel"]{
-      width:100%; padding:14px 16px; border-radius:14px; border:1px solid rgba(255,255,255,0.12);
-      background:#0b1222; color:var(--text); font-size:16px; outline:none; transition: box-shadow .2s, border-color .2s;
+    h1 { margin: 0; font-size: 1.5rem; }
+    .small { font-size: 0.9rem; color: var(--muted); }
+    .divider {
+      margin: 16px 0; height: 1px;
+      background: rgba(255,255,255,0.1);
     }
-    input[type="tel"]:focus{ border-color: var(--accent); box-shadow: 0 0 0 4px rgba(124,58,237,0.25) }
-    button{
-      padding:14px 18px; border-radius:14px; border:1px solid rgba(255,255,255,0.1);
-      background:linear-gradient(90deg, var(--accent), var(--accent-2)); color:white; font-weight:700; cursor:pointer;
-      transition: transform .05s ease-in-out, filter .15s;
+    label { font-weight: 600; display:block; margin-bottom:6px; }
+    input {
+      width: 100%; padding: 10px 14px;
+      border-radius: 8px; border: none;
+      background: rgba(255,255,255,0.08); color: var(--text);
+      font-size: 1rem;
     }
-    button:active{ transform: translateY(1px) }
-    .hint{font-size:12px; color:var(--muted); margin-top:6px}
-    .result{ margin-top:18px; display:none }
-    .result.show{ display:block }
-    .row{ display:flex; align-items:flex-start; gap:10px; margin:10px 0 }
-    .label{ min-width:150px; color:#c7d2fe; font-weight:600 }
-    .value{ color:var(--text) }
-    .chips{ display:flex; gap:8px; flex-wrap:wrap }
-    .chip{ padding:6px 10px; border-radius:999px; background:rgba(255,255,255,0.07); font-size:13px }
-    .status{ font-size:14px; margin-top:8px }
-    .status.ok{ color:var(--ok) }
-    .status.error{ color:var(--error) }
-    .small{ font-size:13px; color:var(--muted) }
-    .divider{ height:1px; background:rgba(255,255,255,0.08); margin:14px 0 }
-    .footer{ margin-top:16px; display:flex; justify-content:space-between; gap:10px; align-items:center }
-    .hide{ display:none }
+    button {
+      margin-top: 12px; width: 100%;
+      padding: 12px; border: none; border-radius: 8px;
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color: white; font-weight: 600; cursor: pointer;
+    }
+    .status { margin-top: 10px; font-size: 0.9rem; }
+    .status.ok { color: var(--accent-2); }
+    .status.error { color: #f87171; }
+    .result { margin-top: 20px; display: none; }
+    .result.show { display:block; }
+    .row { margin-bottom: 8px; }
+    .label { font-weight: 600; }
+    .chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+    .chip {
+      background: rgba(255,255,255,0.08);
+      padding: 4px 10px; border-radius:999px;
+      font-size: 0.85rem;
+    }
     .progressBar{
-      width:100%; height:16px; border-radius:999px;
-      background:rgba(255,255,255,0.07); overflow:hidden; margin-bottom:6px;
+      width:100%; height:18px; border-radius:999px;
+      background:rgba(255,255,255,0.07); overflow:hidden;
     }
     .progressFill{
       height:100%; width:0%; background:linear-gradient(90deg, var(--accent), var(--accent-2));
-      transition:width .4s ease;
+      transition:width .5s ease;
     }
-    @media (max-width:520px){ .label{ min-width:120px } }
+    .footer { margin-top:20px; text-align:right; }
+    .footer a { color: var(--accent); font-size:0.9rem; text-decoration:none; }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>Tra cứu đơn doll theo SĐT</h1>
-    <div class="sub">Nhập <strong>số điện thoại</strong> của bạn để xem thông tin đã đăng ký.</div>
+  <main>
+    <header>
+      <h1>Tra cứu doll CK</h1>
+      <div class="small">Dự án 50 doll</div>
+
+      <!-- Thanh tiến độ tổng -->
+      <div class="progressBar" style="margin-top:12px">
+        <div class="progressFill" id="globalProgressFill"></div>
+      </div>
+      <div class="small" id="globalProgressText">0 / 50 doll đã CK</div>
+    </header>
+
+    <div class="divider"></div>
 
     <form id="lookupForm">
-      <div class="field">
-        <input id="phoneInput" type="tel" inputmode="numeric" autocomplete="tel" placeholder="VD: 0987 654 321 hoặc +84 987654321" required>
-        <div class="hint">Chỉ cần nhập số – hệ thống sẽ tự chuẩn hoá định dạng (0 / +84).</div>
-      </div>
+      <label for="phone">Nhập số điện thoại</label>
+      <input type="text" id="phone" placeholder="VD: 098xxxxxxx"/>
       <button type="submit">Tra cứu</button>
     </form>
 
-    <div id="status" class="status small"></div>
-    <div class="divider"></div>
+    <div id="status" class="status"></div>
 
     <section id="result" class="result">
-      <div class="row"><div class="label">Tên Facebook:</div><div class="value" id="fbName">—</div></div>
-      <div class="row"><div class="label">Tổng số doll lấy:</div><div class="value" id="totalDolls">—</div></div>
+      <div class="row"><div class="label">Tên Facebook:</div><div id="fbName">—</div></div>
+      <div class="row"><div class="label">Tổng số doll lấy:</div><div id="totalDolls">—</div></div>
       <div class="row"><div class="label">Chi tiết:</div>
-        <div class="value">
-          <div class="chips">
-            <span class="chip" id="noBone">— doll không xương</span>
-            <span class="chip" id="withBone">— doll có xương</span>
-          </div>
+        <div class="chips">
+          <span class="chip" id="noBone">— doll không xương</span>
+          <span class="chip" id="withBone">— doll có xương</span>
         </div>
       </div>
-      <div id="multiNote" class="small hide">Có nhiều dòng khớp SĐT của bạn, hệ thống đã <strong>gộp số lượng</strong>.</div>
-
-      <!-- Thanh tiến độ -->
-      <div class="divider"></div>
-      <div class="small" style="margin-bottom:6px">Tiến độ chuyển khoản</div>
-      <div class="progressBar">
-        <div class="progressFill" id="progressFill"></div>
+      <div id="multiNote" class="small" style="display:none">
+        Có nhiều dòng khớp SĐT của bạn, hệ thống đã <strong>gộp số lượng</strong> theo tất cả dòng khớp.
       </div>
-      <div class="small" id="progressText">0 / 50 doll</div>
     </section>
 
-    <div class="footer small">
-      <a href="#" id="refreshBtn" style="color:#a5b4fc">Làm mới dữ liệu</a>
+    <div class="footer">
+      <a href="#" id="refreshBtn">Làm mới dữ liệu</a>
     </div>
   </main>
 
   <script>
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8BbOZIGFLYc5iqesG38ysAG8tOXDNqFzjLmodFIrYyIImc4xwLwapjJRIlM2sYT2NI3KKCp4V9BRs/pub?gid=115418440&single=true&output=csv';
-    const state = { rows: [], header: [] };
-    const el = (id)=>document.getElementById(id);
-    const statusEl = el('status');
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8BbOZIGFLYc5iqesG38ysAG8tOXDNqFzjLmodFIrYyIImc4xwLwapjJRIlM2/pub?output=csv";
+    let sheetData = [];
 
-    function setStatus(msg, type=''){
-      statusEl.textContent = msg || '';
-      statusEl.className = `status small ${type}`.trim();
+    function el(id){ return document.getElementById(id); }
+
+    function setStatus(msg, cls=''){ 
+      const s = el('status'); 
+      s.textContent = msg; s.className = 'status '+cls;
     }
 
-    function parseCSV(text){
-      const rows=[]; let cur=['']; let inQuotes=false;
-      for(const ch of text){
-        if(ch==='"'){ inQuotes = !inQuotes; }
-        else if(ch===',' && !inQuotes){ cur.push(''); }
-        else if((ch==='\n' || ch==='\r') && !inQuotes){
-          if(cur.length>1 || cur[0].trim()!=='') rows.push(cur);
-          cur=[''];
-        }else{ cur[cur.length-1]+=ch; }
-      }
-      if(cur.length>1 || cur[0].trim()!=='') rows.push(cur);
-      return rows.map(r=>r.map(c=>c.replace(/^\ufeff/,'').trim()));
-    }
-
-    function normalizePhone(raw){
-      if(!raw) return '';
-      let digits = String(raw).replace(/\D+/g,'');
-      if(digits.startsWith('84') && digits.length>=10){
-        digits = '0' + digits.slice(2);
-      }
-      if(digits.length>11) digits = digits.slice(-11);
-      return digits;
-    }
-
+    // Tải sheet
     async function loadSheet(){
-      setStatus('Đang tải dữ liệu từ Google Sheets...');
       try{
-        const res = await fetch(SHEET_CSV_URL, { cache:'no-store' });
-        if(!res.ok) throw new Error('Không tải được CSV');
+        const res = await fetch(SHEET_URL);
         const text = await res.text();
-        const rows = parseCSV(text);
-        if(rows.length===0) throw new Error('CSV rỗng');
-        state.header = rows[0];
-        state.rows = rows.slice(1);
-        setStatus('Dữ liệu đã sẵn sàng.', 'ok');
-      }catch(err){
-        console.error(err);
-        setStatus('Lỗi tải dữ liệu: ' + err.message, 'error');
+        const rows = text.split("\n").map(r=>r.split(","));
+        sheetData = rows;
+
+        // tính tổng CK
+        let globalTotal = 0;
+        sheetData.forEach((row,i)=>{
+          if(i===0) return; // header
+          const noBone = parseInt(row[4]||0,10);
+          const withBone = parseInt(row[5]||0,10);
+          globalTotal += (noBone + withBone);
+        });
+        const percent = Math.min(100,(globalTotal/50)*100);
+        el('globalProgressFill').style.width = percent+'%';
+        el('globalProgressText').textContent = `${globalTotal} / 50 doll đã CK`;
+
+        setStatus("Dữ liệu đã tải xong, nhập SĐT để tra cứu.", "ok");
+      }catch(e){
+        setStatus("Lỗi tải dữ liệu: "+e, "error");
       }
     }
 
-    function lookupByPhone(inputPhone){
-      const q = normalizePhone(inputPhone);
-      if(!q){ return { matches:[], sumE:0, sumF:0, names:[] }; }
-      const matches=[];
-      for(const row of state.rows){
-        const phone = normalizePhone(row[1] || '');
-        if(!phone) continue;
-        if(phone === q || phone.endsWith(q) || q.endsWith(phone)){
+    // Tra cứu
+    function lookup(phone){
+      if(!sheetData.length){ setStatus("Chưa có dữ liệu.", "error"); return; }
+      let matches = [];
+      sheetData.forEach((row,i)=>{
+        if(i===0) return;
+        if((row[1]||"").includes(phone)){
           matches.push(row);
         }
-      }
-      let sumE=0, sumF=0; const nameSet=new Set();
-      for(const r of matches){
-        const e = Number((r[4]||'').toString().replace(/,/g,'')) || 0;
-        const f = Number((r[5]||'').toString().replace(/,/g,'')) || 0;
-        sumE += e; sumF += f;
-        const name = (r[2]||'').trim(); if(name) nameSet.add(name);
-      }
-      return { matches, sumE, sumF, names:[...nameSet] };
-    }
-
-    function renderResult(data){
-      const { matches, sumE, sumF, names } = data;
-      const result = el('result');
-      const fbName = el('fbName');
-      const total = el('totalDolls');
-      const noBone = el('noBone');
-      const withBone = el('withBone');
-      const multiNote = el('multiNote');
-
+      });
       if(matches.length===0){
-        result.classList.remove('show');
-        setStatus('Không tìm thấy dữ liệu cho SĐT đã nhập.', 'error');
+        setStatus("Không tìm thấy dữ liệu cho SĐT này.", "error");
+        el('result').classList.remove('show');
         return;
       }
-
-      const totalDoll = sumE + sumF;
-      fbName.textContent = names.length ? names.join(', ') : '—';
-      total.textContent = totalDoll.toString();
-      noBone.textContent = `${sumE} doll không xương`;
-      withBone.textContent = `${sumF} doll có xương`;
-      multiNote.classList.toggle('hide', matches.length<=1);
-
-      const progressFill = el('progressFill');
-      const progressText = el('progressText');
-      const percent = Math.min(100, (totalDoll/50)*100);
-      progressFill.style.width = percent + '%';
-      progressText.textContent = `${totalDoll} / 50 doll`;
-
-      result.classList.add('show');
-      setStatus(`Tìm thấy ${matches.length} dòng khớp.`, 'ok');
+      let sumE=0,sumF=0,names=[];
+      matches.forEach(r=>{
+        sumE += parseInt(r[4]||0,10);
+        sumF += parseInt(r[5]||0,10);
+        if(r[2]) names.push(r[2]);
+      });
+      el('fbName').textContent = names.join(", ") || "—";
+      el('totalDolls').textContent = sumE+sumF;
+      el('noBone').textContent = `${sumE} doll không xương`;
+      el('withBone').textContent = `${sumF} doll có xương`;
+      el('multiNote').style.display = matches.length>1?"block":"none";
+      el('result').classList.add('show');
+      setStatus(`Tìm thấy ${matches.length} dòng khớp.`, "ok");
     }
 
-    document.getElementById('lookupForm').addEventListener('submit', (e)=>{
+    // Form
+    document.getElementById('lookupForm').addEventListener('submit',e=>{
       e.preventDefault();
-      const phone = document.getElementById('phoneInput').value;
-      const data = lookupByPhone(phone);
-      renderResult(data);
+      const phone = el('phone').value.trim();
+      if(!phone){ setStatus("Vui lòng nhập số điện thoại.", "error"); return; }
+      lookup(phone);
     });
 
-    document.getElementById('refreshBtn').addEventListener('click', (e)=>{
+    // Refresh
+    el('refreshBtn').addEventListener('click',e=>{
       e.preventDefault();
+      setStatus("Đang tải lại dữ liệu...");
       loadSheet();
     });
 
