@@ -68,6 +68,8 @@
       height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2));
       width:0%; transition:width .4s ease;
     }
+    .footer{ margin-top:16px; text-align:right }
+    .footer a{ color:#a5b4fc; font-size:13px; text-decoration:none }
   </style>
 </head>
 <body>
@@ -100,6 +102,10 @@
     <div class="progress-container">
       <div class="progress-label" id="progressText">Đã có 0 doll đã chuyển khoản</div>
       <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="footer">
+      <a href="#" id="refreshBtn">Làm mới dữ liệu</a>
     </div>
   </main>
 
@@ -188,6 +194,11 @@
       const phone=el('phoneInput').value;
       const data=lookup(phone);
       renderResult(data);
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', e=>{
+      e.preventDefault();
+      loadSheet();
     });
 
     loadSheet();
