@@ -6,29 +6,43 @@
   <title>Tra đơn order W25 HLE Bống Dung theo số điện thoại</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#6ee7b7;--glass:rgba(255,255,255,0.03)}
+    :root{
+      --bg:#0f1724;
+      --card:#161c2e;
+      --muted:#9aa4b2;
+      --accent:#f97316; /* cam dịu */
+      --glass:rgba(255,255,255,0.03);
+    }
     *{box-sizing:border-box}
-    body{font-family:Montserrat,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:0;background:linear-gradient(180deg,#071025 0%, #071827 100%);color:#e6eef6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px}
+    body{
+      font-family:Montserrat,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      margin:0;
+      background:linear-gradient(180deg,#0b0f1a 0%, #111827 100%);
+      color:#e6eef6;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
     .container{width:100%;max-width:920px}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    h1{font-size:20px;margin:0}
+    header{margin-bottom:18px}
+    h1{font-size:20px;margin:0;color:var(--accent)}
     .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 24px rgba(2,6,23,0.6);}
     .controls{display:flex;gap:8px;align-items:center}
     input[type=text]{flex:1;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--glass);color:inherit;font-size:14px}
-    button{padding:10px 14px;border-radius:8px;border:0;background:linear-gradient(90deg,#0ea5a5,#4f46e5);color:white;font-weight:600;cursor:pointer}
+    button{padding:10px 14px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),#fb923c);color:white;font-weight:600;cursor:pointer}
     .note{color:var(--muted);font-size:13px;margin-top:8px}
     .result{margin-top:16px}
-    .profile{display:flex;gap:12px;align-items:center}
-    .avatar{width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,#0b1220,#0f1724);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700;font-size:18px}
-    .name a{color:#bfe6d5;text-decoration:none;font-weight:600}
-    .section-title{font-weight:700;margin-top:14px;margin-bottom:6px}
-    .summary{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;color:var(--muted)}
-    .details{margin-top:10px;border-left:3px solid rgba(255,255,255,0.03);padding-left:12px}
+    .name a{color:var(--accent);text-decoration:none;font-weight:600}
+    .section-title{font-weight:700;margin-top:14px;margin-bottom:6px;color:var(--accent)}
+    .summary{background:rgba(249,115,22,0.08);padding:10px;border-radius:8px;color:var(--muted)}
+    .details{margin-top:10px;border-left:3px solid rgba(249,115,22,0.3);padding-left:12px}
     .line{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px}
     .label{min-width:120px;color:var(--muted);font-weight:600}
     .value{white-space:pre-wrap}
     footer{margin-top:10px;font-size:13px;color:var(--muted)}
-    .css-sep{height:1px;background:rgba(255,255,255,0.03);margin:14px 0;border-radius:2px}
+    .css-sep{height:1px;background:rgba(255,255,255,0.05);margin:14px 0;border-radius:2px}
     .small{font-size:13px;color:var(--muted)}
     @media(max-width:600px){.label{min-width:100px}}
   </style>
@@ -36,18 +50,15 @@
 <body>
   <div class="container">
     <header>
-      <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(90deg,#4f46e5,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700">HLE</div>
-      <div>
-        <h1>Tra đơn order W25 HLE Bống Dung</h1>
-        <div class="small">Nhập số điện thoại (chỉ số)</div>
-      </div>
+      <h1>Tra đơn order W25 HLE Bống Dung</h1>
+      <div class="small">Nhập số điện thoại (chỉ số)</div>
     </header>
 
     <div class="card">
       <div class="controls">
         <input id="phoneInput" type="text" placeholder="Nhập số điện thoại (ví dụ: 0987654321)" />
         <button id="searchBtn">Tìm</button>
-        <button id="clearBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);">Xóa</button>
+        <button id="clearBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:#e6eef6">Xóa</button>
       </div>
 
       <div id="result" class="result"></div>
@@ -60,7 +71,7 @@
 <script>
 // -- CONFIG --
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvqOsaXLMUOgh3lAArd-h4HQcS-rba4EJLaCP-wgP3pbIe4oVq2ZOms79HyB6F3aiqBt_nCO0dvWm/pub?gid=57038965&single=true&output=csv';
-// Column indexes (0-based). Mapping based on your description: B=1, C=2, D=3, F=5, G=6, H=7, I=8, J=9, K=10, L=11, M=12, O=14
+// Column indexes (0-based). Mapping: B=1, C=2, D=3, F=5, G=6, H=7, I=8, J=9, K=10, L=11, M=12, O=14
 const COL = {
   phone:1, fbName:2, fbLink:3,
   jacketQty:5, jacketDetail:6,
@@ -69,7 +80,6 @@ const COL = {
   muffleQty:11, amountPaid:12, note:14
 };
 
-// small robust CSV parser for well-formed sheets (handles quoted fields)
 function parseCSV(text){
   const rows = [];
   let cur = [];
@@ -90,13 +100,11 @@ function parseCSV(text){
       field += ch; i++; continue;
     }
   }
-  // last
   if(field!=='' || inQuotes || cur.length>0){ cur.push(field); rows.push(cur);} 
   return rows;
 }
 
 function onlyDigits(s){ return (s||'').toString().replace(/[^0-9]/g,''); }
-
 function htmlEscape(s){ if(s==null) return ''; return s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 async function loadAndSearch(phoneRaw){
@@ -108,32 +116,27 @@ async function loadAndSearch(phoneRaw){
     const txt = await resp.text();
     const rows = parseCSV(txt);
     if(rows.length<=0) { root.innerHTML='<div class="small">CSV rỗng</div>'; return; }
-    // header row maybe first
-    const header = rows[0];
     const data = rows.slice(1);
     const target = onlyDigits(phoneRaw);
     const matches = data.filter(r => onlyDigits(r[COL.phone]) === target);
     if(matches.length===0){ root.innerHTML = '<div class="small">Không tìm thấy đơn nào cho số: '+htmlEscape(phoneRaw)+'</div>'; return; }
 
-    // build HTML for each match
     let out = '';
-    matches.forEach((r,idx)=>{
+    matches.forEach((r)=>{
       const fbName = r[COL.fbName] || '(No name)';
       const fbLink = r[COL.fbLink] || '';
-      const jacketQty = Number((r[COL.jacketQty]||'').toString().trim()) || 0;
+      const jacketQty = Number((r[COL.jacketQty]||'').trim()) || 0;
       const jacketDetail = r[COL.jacketDetail] || '';
-      const jerseyBlackQty = Number((r[COL.jerseyBlackQty]||'').toString().trim()) || 0;
+      const jerseyBlackQty = Number((r[COL.jerseyBlackQty]||'').trim()) || 0;
       const jerseyBlackDetail = r[COL.jerseyBlackDetail] || '';
-      const jerseyOrangeQty = Number((r[COL.jerseyOrangeQty]||'').toString().trim()) || 0;
+      const jerseyOrangeQty = Number((r[COL.jerseyOrangeQty]||'').trim()) || 0;
       const jerseyOrangeDetail = r[COL.jerseyOrangeDetail] || '';
-      const muffleQty = Number((r[COL.muffleQty]||'').toString().trim()) || 0;
+      const muffleQty = Number((r[COL.muffleQty]||'').trim()) || 0;
       const amountPaid = r[COL.amountPaid] || '';
       const note = r[COL.note] || '';
 
       out += '<div class="card" style="margin-top:12px">';
-      // profile
-      out += '<div class="profile">';
-      out += '<div class="avatar">'+htmlEscape((fbName||'').toString().slice(0,2).toUpperCase())+'</div>';
+      // profile (only name)
       out += '<div class="name">';
       if(fbLink){
         const safeLink = fbLink.startsWith('http')?fbLink:'https://'+fbLink;
@@ -142,10 +145,9 @@ async function loadAndSearch(phoneRaw){
         out += '<div>'+htmlEscape(fbName)+'</div>';
       }
       out += '<div class="small">Số điện thoại: '+htmlEscape(r[COL.phone]||'')+'</div>';
-      out += '</div></div>';
+      out += '</div>';
 
       out += '<div class="section-title">Thông tin đơn hàng</div>';
-      // summary
       const parts = [];
       if(jacketQty>0) parts.push(jacketQty+' jacket'+(jacketQty>1?'s':''));
       if(jerseyBlackQty>0) parts.push(jerseyBlackQty+' jersey đen');
@@ -154,7 +156,6 @@ async function loadAndSearch(phoneRaw){
       if(parts.length>0){ out += '<div class="summary"><strong>Summary:</strong> '+htmlEscape(parts.join(', '))+'</div>'; }
 
       out += '<div class="details">';
-      // Jacket detail
       if(jacketQty>0){ out += '<div class="line"><div class="label">Jacket</div><div class="value">'+htmlEscape(jacketDetail||'(no detail)')+'</div></div>'; }
       if(jerseyBlackQty>0){ out += '<div class="line"><div class="label">Jersey đen</div><div class="value">'+htmlEscape(jerseyBlackDetail||'(no detail)')+'</div></div>'; }
       if(jerseyOrangeQty>0){ out += '<div class="line"><div class="label">Jersey cam</div><div class="value">'+htmlEscape(jerseyOrangeDetail||'(no detail)')+'</div></div>'; }
@@ -162,9 +163,8 @@ async function loadAndSearch(phoneRaw){
 
       out += '<div class="line"><div class="label">Số tiền đã chuyển</div><div class="value">'+htmlEscape(amountPaid||'(chưa có)')+'</div></div>';
       if(note) out += '<div class="line"><div class="label">Ghi chú</div><div class="value">'+htmlEscape(note)+'</div></div>';
-
-      out += '</div>'; // details
-      out += '</div>'; // card
+      out += '</div>';
+      out += '</div>';
     });
 
     root.innerHTML = out;
@@ -173,8 +173,6 @@ async function loadAndSearch(phoneRaw){
   }
 }
 
-// attach events
-document.getElementById('csvUrl').textContent = CSV_URL;
 const input = document.getElementById('phoneInput');
 document.getElementById('searchBtn').addEventListener('click', ()=>{
   const v = input.value.trim(); if(!v){ input.focus(); return; }
@@ -182,7 +180,6 @@ document.getElementById('searchBtn').addEventListener('click', ()=>{
 });
 input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ document.getElementById('searchBtn').click(); } });
 document.getElementById('clearBtn').addEventListener('click', ()=>{ input.value=''; document.getElementById('result').innerHTML=''; input.focus(); });
-
 </script>
 </body>
 </html>
