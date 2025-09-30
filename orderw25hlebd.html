@@ -79,9 +79,9 @@ const COL = {
   jerseyOrangeQty:9, jerseyOrangeDetail:10,
   muffleQty:11,
   keyringQty:12, keyringDetail:13,
-  amountPaid:14, note:15
+  amountPaid:14, // <-- moved to column O
+  note:16        // <-- moved to column Q
 };
-
 function parseCSV(text){
   const rows = [];
   let cur = [];
