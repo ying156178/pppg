@@ -173,7 +173,7 @@ async function loadAndSearch(phoneRaw){
   const root=document.getElementById('result');
   root.innerHTML='<div class="small">Đang tải dữ liệu...</div>';
   try{
-    const resp=await fetch(CSV_URL);
+    const resp = await fetch(CSV_URL + '&_ts=' + Date.now());
     const txt=await resp.text();
     const rows=parseCSV(txt).slice(1);
     const target=normalizePhone(phoneRaw);
