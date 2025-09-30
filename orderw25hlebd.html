@@ -71,17 +71,21 @@
 <script>
 // -- CONFIG --
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRfvqOsaXLMUOgh3lAArd-h4HQcS-rba4EJLaCP-wgP3pbIe4oVq2ZOms79HyB6F3aiqBt_nCO0dvWm/pub?gid=57038965&single=true&output=csv';
-// Column indexes (0-based). Mapping: B=1, C=2, D=3, F=5, G=6, H=7, I=8, J=9, K=10, L=11, M=12, N=13, O=14
+
+// Column indexes (0-based)
 const COL = {
   phone:1, fbName:2, fbLink:3,
   jacketQty:5, jacketDetail:6,
   jerseyBlackQty:7, jerseyBlackDetail:8,
   jerseyOrangeQty:9, jerseyOrangeDetail:10,
-  muffleQty:11,
-  keyringQty:12, keyringDetail:13,
-  amountPaid:14, // <-- moved to column O
-  note:16        // <-- moved to column Q
+  muffleQty:11,                      // L
+  keyringMiniQty:12,                 // M
+  keyringBlackUniQty:13,             // N
+  keyringBlackUniDetail:13,          // dùng chung N (giả sử có detail text)
+  amountPaid:14,                     // O
+  note:16                            // Q
 };
+
 function parseCSV(text){
   const rows = [];
   let cur = [];
@@ -134,8 +138,9 @@ async function loadAndSearch(phoneRaw){
       const jerseyOrangeQty = Number((r[COL.jerseyOrangeQty]||'').trim()) || 0;
       const jerseyOrangeDetail = r[COL.jerseyOrangeDetail] || '';
       const muffleQty = Number((r[COL.muffleQty]||'').trim()) || 0;
-      const keyringQty = Number((r[COL.keyringQty]||'').trim()) || 0;
-      const keyringDetail = r[COL.keyringDetail] || '';
+      const keyringMiniQty = Number((r[COL.keyringMiniQty]||'').trim()) || 0;
+      const keyringBlackUniQty = Number((r[COL.keyringBlackUniQty]||'').trim()) || 0;
+      const keyringBlackUniDetail = r[COL.keyringBlackUniDetail] || '';
       const amountPaid = r[COL.amountPaid] || '';
       const note = r[COL.note] || '';
 
@@ -150,21 +155,25 @@ async function loadAndSearch(phoneRaw){
       out += '<div class="small">Số điện thoại: '+htmlEscape(r[COL.phone]||'')+'</div>';
       out += '</div>';
 
+      // --- Summary ---
       out += '<div class="section-title">Thông tin đơn hàng</div>';
       const parts = [];
       if(jacketQty>0) parts.push(jacketQty+' jacket');
       if(jerseyBlackQty>0) parts.push(jerseyBlackQty+' jersey đen');
       if(jerseyOrangeQty>0) parts.push(jerseyOrangeQty+' jersey cam');
       if(muffleQty>0) parts.push(muffleQty+' muffle');
-      if(keyringQty>0) parts.push(keyringQty+' keyring');
+      if(keyringMiniQty>0) parts.push(keyringMiniQty+' keyring mini scarf');
+      if(keyringBlackUniQty>0) parts.push(keyringBlackUniQty+' keyring black uni');
       if(parts.length>0){ out += '<div class="summary"><strong>Summary:</strong> '+htmlEscape(parts.join(', '))+'</div>'; }
 
+      // --- Details ---
       out += '<div class="details">';
       if(jacketQty>0){ out += '<div class="line"><div class="label">Jacket</div><div class="value">'+htmlEscape(jacketDetail||'(no detail)')+'</div></div>'; }
       if(jerseyBlackQty>0){ out += '<div class="line"><div class="label">Jersey đen</div><div class="value">'+htmlEscape(jerseyBlackDetail||'(no detail)')+'</div></div>'; }
       if(jerseyOrangeQty>0){ out += '<div class="line"><div class="label">Jersey cam</div><div class="value">'+htmlEscape(jerseyOrangeDetail||'(no detail)')+'</div></div>'; }
       if(muffleQty>0){ out += '<div class="line"><div class="label">Muffle</div><div class="value">'+htmlEscape(String(muffleQty))+'</div></div>'; }
-      if(keyringQty>0){ out += '<div class="line"><div class="label">Keyring</div><div class="value">'+htmlEscape(keyringDetail||'(no detail)')+'</div></div>'; }
+      if(keyringMiniQty>0){ out += '<div class="line"><div class="label">Keyring Mini Scarf</div><div class="value">'+htmlEscape(String(keyringMiniQty))+'</div></div>'; }
+      if(keyringBlackUniQty>0){ out += '<div class="line"><div class="label">Keyring Black Uni</div><div class="value">'+htmlEscape(keyringBlackUniDetail||String(keyringBlackUniQty))+'</div></div>'; }
 
       out += '<div class="line"><div class="label">Số tiền đã chuyển</div><div class="value">'+htmlEscape(amountPaid||'(chưa có)')+'</div></div>';
       if(note) out += '<div class="line"><div class="label">Ghi chú</div><div class="value">'+htmlEscape(note)+'</div></div>';
@@ -177,14 +186,7 @@ async function loadAndSearch(phoneRaw){
     document.getElementById('result').innerHTML = '<div class="small">Lỗi: '+htmlEscape(err.message)+'</div>';
   }
 }
-
-const input = document.getElementById('phoneInput');
-document.getElementById('searchBtn').addEventListener('click', ()=>{
-  const v = input.value.trim(); if(!v){ input.focus(); return; }
-  loadAndSearch(v);
-});
-input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ document.getElementById('searchBtn').click(); } });
-document.getElementById('clearBtn').addEventListener('click', ()=>{ input.value=''; document.getElementById('result').innerHTML=''; input.focus(); });
 </script>
+
 </body>
 </html>
