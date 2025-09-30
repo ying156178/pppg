@@ -142,12 +142,30 @@ function parseCSV(text){
 }
 
 // --- chuẩn hóa số điện thoại ---
+// --- chuẩn hóa số điện thoại ---
+// Cho phép: +84xxxxxxxxx | 84xxxxxxxxx | 0xxxxxxxxx | xxxxxxxxx
 function normalizePhone(s){
   let digits = (s||'').toString().replace(/[^0-9]/g,''); // chỉ giữ số
-  if(digits.startsWith('84')) digits = '0' + digits.slice(2);
-  if(digits.startsWith('+84')) digits = '0' + digits.slice(3);
+
+  // Nếu có +84 ở đầu (vd: +84987654321)
+  if((s||'').startsWith('+84')){
+    digits = '0' + digits.slice(2); // bỏ 84 → thêm 0
+  }
+  // Nếu có 84 ở đầu (vd: 84987654321)
+  else if(digits.startsWith('84')){
+    digits = '0' + digits.slice(2);
+  }
+  // Nếu không có gì (vd: 987654321) thì thêm 0
+  else if(digits.length === 9){
+    digits = '0' + digits;
+  }
+  // Nếu đã bắt đầu bằng 0 thì giữ nguyên
+  // digits = "0xxxxxxxxx"
+  
   return digits;
 }
+
+
 
 function htmlEscape(s){ return (s||'').replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
