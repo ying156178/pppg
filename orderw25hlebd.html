@@ -201,7 +201,7 @@ async function loadAndSearch(phoneRaw){
       if(jacketQty>0) parts.push(jacketQty+' jacket');
       if(jerseyBlackQty>0) parts.push(jerseyBlackQty+' jersey đen');
       if(jerseyOrangeQty>0) parts.push(jerseyOrangeQty+' jersey cam');
-      if(muffleQty>0) parts.push(muffleQty+' muffle');
+      if(muffleQty>0) parts.push(muffleQty+' muffler');
       if(keyringMiniQty>0) parts.push(keyringMiniQty+' keyring mini scarf');
       if(keyringBlackUni) parts.push('keyring black uni');
       if(parts.length>0) out+='<div class="summary"><strong>Summary:</strong> '+htmlEscape(parts.join(', '))+'</div>';
@@ -211,7 +211,7 @@ async function loadAndSearch(phoneRaw){
       if(jacketQty>0) out+='<div class="line"><div class="label">Jacket</div><div class="value">'+htmlEscape(jacketDetail)+'</div></div>';
       if(jerseyBlackQty>0) out+='<div class="line"><div class="label">Jersey đen</div><div class="value">'+htmlEscape(jerseyBlackDetail)+'</div></div>';
       if(jerseyOrangeQty>0) out+='<div class="line"><div class="label">Jersey cam</div><div class="value">'+htmlEscape(jerseyOrangeDetail)+'</div></div>';
-      if(muffleQty>0) out+='<div class="line"><div class="label">Muffle</div><div class="value">'+muffleQty+'</div></div>';
+      if(muffleQty>0) out+='<div class="line"><div class="label">Muffler</div><div class="value">'+muffleQty+'</div></div>';
       if(keyringMiniQty>0) out+='<div class="line"><div class="label">Keyring Mini Scarf</div><div class="value">'+keyringMiniQty+'</div></div>';
       if(keyringBlackUni) out+='<div class="line"><div class="label">Keyring Black Uni</div><div class="value">'+htmlEscape(keyringBlackUni)+'</div></div>';
       out+='<div class="line"><div class="label">Số tiền đã chuyển</div><div class="value">'+htmlEscape(amountPaid||'(chưa có)')+'</div></div>';
