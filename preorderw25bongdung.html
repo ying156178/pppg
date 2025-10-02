@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>PREORDER W25 HLE - BỐNG DUNG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #121212;
+      color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+      color: gold;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .search-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    input[type="tel"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid gold;
+      background: #1e1e1e;
+      color: #fff;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: gold;
+      color: black;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #ffd700;
+    }
+    .results {
+      margin: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+    .order {
+      background: #1e1e1e;
+      border: 1px solid gold;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+    .order h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: gold;
+    }
+    .order p {
+      margin: 6px 0;
+    }
+    a {
+      color: gold;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      header {
+        font-size: 1.2rem;
+      }
+      .order h3 {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>PREORDER W25 HLE - BỐNG DUNG</header>
+  <div class="search-box">
+    <input type="tel" id="phone" placeholder="Nhập số điện thoại" inputmode="numeric">
+    <div style="display:flex; gap:10px;">
+      <button onclick="searchOrder()">Tìm đơn</button>
+      <button onclick="loadData()">Refresh Data</button>
+    </div>
+  </div>
+  <div class="results" id="results"></div>
+
+  <script>
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS68LmtizleGjeH66aUUo9B2YC75ye4ZjfIfjR7lCe17JPAXqisC_FKkoLtVpfsUtwvLs0yObWmIdM4/pub?gid=272659167&single=true&output=csv";
+    let data = [];
+
+    async function loadData() {
+      const res = await fetch(sheetUrl);
+      const text = await res.text();
+      const rows = text.split("\n").map(r => r.split(","));
+      data = rows;
+      alert("Dữ liệu đã được refresh!");
+    }
+
+    function normalizePhone(phone) {
+      let p = phone.replace(/\D/g, "");
+      if (p.startsWith("84")) return "0" + p.slice(2);
+      if (p.startsWith("0084")) return "0" + p.slice(4);
+      if (p.startsWith("+84")) return "0" + p.slice(3);
+      return p;
+    }
+
+    function searchOrder() {
+      const phoneInput = document.getElementById("phone").value.trim();
+      const phone = normalizePhone(phoneInput);
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      if (!phone) {
+        resultsDiv.innerHTML = "<p>Vui lòng nhập số điện thoại.</p>";
+        return;
+      }
+
+      // cột bắt đầu từ 0 => B=1, C=2, D=3 ...
+      const orders = data.filter(row => normalizePhone(row[1]) === phone);
+
+      if (orders.length === 0) {
+        resultsDiv.innerHTML = "<p>Không tìm thấy đơn hàng nào.</p>";
+        return;
+      }
+
+      orders.forEach(row => {
+        let html = `<div class="order">
+          <h3>THÔNG TIN ĐƠN HÀNG</h3>
+          <p><strong>Facebook:</strong> <a href="${row[3]}" target="_blank">${row[2]}</a></p>`;
+
+        if (row[5]) html += `<p><strong>Số lượng Jacket:</strong> ${row[5]}</p>`;
+        if (row[6]) html += `<p><strong>Marking Jacket:</strong> ${row[6]}</p>`;
+        if (row[7]) html += `<p><strong>Số lượng Jersey đen:</strong> ${row[7]}</p>`;
+        if (row[8]) html += `<p><strong>Marking Jersey đen:</strong> ${row[8]}</p>`;
+        if (row[9]) html += `<p><strong>Số lượng Jersey cam:</strong> ${row[9]}</p>`;
+        if (row[10]) html += `<p><strong>Marking Jersey cam:</strong> ${row[10]}</p>`;
+        if (row[11]) html += `<p><strong>Muffler:</strong> ${row[11]}</p>`;
+        if (row[12]) html += `<p><strong>Keyring Uni:</strong> ${row[12]}</p>`;
+        if (row[13]) html += `<p><strong>Keyring Khăn:</strong> ${row[13]}</p>`;
+        if (row[14]) html += `<p><strong>Marking lẻ:</strong> ${row[14]}</p>`;
+        if (row[15]) html += `<p><strong>Số tiền đã chuyển:</strong> ${row[15]}</p>`;
+        if (row[17]) html += `<p><strong>Ghi chú:</strong> ${row[17]}</p>`;
+
+        html += "</div>";
+        resultsDiv.innerHTML += html;
+      });
+    }
+
+    // load khi mở trang
+    loadData();
+  </script>
+</body>
+</html>
