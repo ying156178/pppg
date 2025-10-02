@@ -45,8 +45,20 @@
       gap: 8px;
       align-items: center;
       margin-top: 16px;
-      flex-wrap: wrap;
+      flex-wrap: wrap; /* cho phép xuống hàng */
     }
+
+    @media (max-width: 600px) {
+      .searchbar {
+        flex-direction: column;  /* dọc trên mobile */
+        align-items: stretch;
+    }
+  .searchbar input,
+  .searchbar button {
+    width: 100%;   /* nút và input full width */
+  }
+}
+
     input[type=tel] {
       flex: 1;
       min-width: 180px;
