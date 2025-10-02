@@ -1,190 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Tra đơn pre-order W25 HLE Bống Dung</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tra cứu đơn hàng W25 HLE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --muted: #aaa;
+      --accent: #d4af37; /* vàng kim */
+      --glass: rgba(255,255,255,0.05);
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #121212;
-      color: #f5f5f5;
+      font-family: Montserrat, sans-serif;
       margin: 0;
-      padding: 0;
-      height: 100vh;
+      background: linear-gradient(180deg, #0b0b0b, #141414 100%);
+      color: #f0f0f0;
+      min-height: 100vh;
       display: flex;
+      align-items: center;
       justify-content: center;
-      align-items: center;
+      padding: 16px;
     }
-    .container {
-      background: #1e1e1e;
-      border: 2px solid #FFD700;
+    .container { width: 100%; max-width: 720px; }
+    .card {
+      background: var(--card);
       border-radius: 16px;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-      padding: 25px;
-      width: 90%;
-      max-width: 650px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+      border: 1px solid rgba(212,175,55,0.3);
+    }
+    h1 {
+      font-size: 20px;
+      margin: 0;
+      color: var(--accent);
       text-align: center;
+      font-weight: 700;
     }
-    header {
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #FFD700;
-      margin-bottom: 20px;
-    }
-    .search-box {
+    .searchbar {
       display: flex;
-      flex-direction: column;
+      gap: 8px;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
+      margin-top: 16px;
+      flex-wrap: wrap;
     }
-    input[type="tel"] {
-      width: 100%;
+    input[type=tel] {
+      flex: 1;
+      min-width: 180px;
       padding: 12px;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #FFD700;
-      background: #121212;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: var(--glass);
       color: #fff;
-      text-align: center;
+      font-size: 15px;
     }
     button {
-      padding: 10px 20px;
+      padding: 12px 16px;
+      border-radius: 10px;
       border: none;
-      border-radius: 8px;
-      background: #FFD700;
-      color: black;
+      background: var(--accent);
+      color: #000;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.2s;
     }
-    button:hover {
-      background: #e6c200;
+    button:hover { opacity: 0.9; }
+    #clearBtn, #refreshBtn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
     }
-    .results {
-      margin-top: 20px;
-      text-align: left;
-    }
-    .order {
-      background: #2a2a2a;
-      border: 1px solid #FFD700;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
-    .order h3 {
-      margin-top: 0;
-      font-size: 1.2rem;
-      color: #FFD700;
-    }
-    .order p {
-      margin: 6px 0;
-    }
-    a {
-      color: #FFD700;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .message {
-      background: #2a2a2a;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #FFD700;
-      color: #FFD700;
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
       text-align: center;
     }
+    .result { margin-top: 20px; }
+    .name a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .section-title { font-weight: 700; margin-top: 12px; margin-bottom: 6px; color: var(--accent); }
+    .details { margin-top: 10px; border-left: 3px solid rgba(212,175,55,0.4); padding-left: 12px; }
+    .line { margin-bottom: 8px; }
+    .label { font-weight: 600; color: var(--muted); margin-bottom: 2px; }
+    .value { white-space: pre-wrap; }
+    .small { font-size: 13px; color: var(--muted); }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>Tra đơn pre-order W25 HLE Bống Dung</header>
-    <div class="search-box">
-      <input type="tel" id="phone" placeholder="Nhập số điện thoại" inputmode="numeric">
-      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
-        <button onclick="searchOrder()">Tìm đơn</button>
-        <button onclick="loadData()">Refresh Data</button>
+    <div class="card">
+      <h1>Tra cứu đơn hàng W25 HLE</h1>
+      <div class="searchbar">
+        <input id="phoneInput" type="tel" inputmode="numeric" placeholder="Nhập số điện thoại..." />
+        <button id="searchBtn">Tìm</button>
+        <button id="refreshBtn">Refresh</button>
+        <button id="clearBtn">Xóa</button>
       </div>
+      <div class="note">Hỗ trợ định dạng: 0xxxxxxxxx, xxxxxxxxx, 84xxxxxxxxx, +84xxxxxxxxx, 0084xxxxxxxxx</div>
+      <div id="result" class="result"></div>
     </div>
-    <div class="results" id="results"></div>
   </div>
 
-  <script>
-    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS68LmtizleGjeH66aUUo9B2YC75ye4ZjfIfjR7lCe17JPAXqisC_FKkoLtVpfsUtwvLs0yObWmIdM4/pub?gid=272659167&single=true&output=csv";
-    let data = [];
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS68LmtizleGjeH66aUUo9B2YC75ye4ZjfIfjR7lCe17JPAXqisC_FKkoLtVpfsUtwvLs0yObWmIdM4/pub?gid=272659167&single=true&output=csv";
 
-    async function loadData() {
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = `<div class="message">Đang tải dữ liệu...</div>`;
-      try {
-        const res = await fetch(sheetUrl);
-        const text = await res.text();
-        const rows = text.split("\n").map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)); // tách csv an toàn
-        data = rows;
-        resultsDiv.innerHTML = `<div class="message">Dữ liệu đã được refresh thành công!</div>`;
-      } catch (e) {
-        resultsDiv.innerHTML = `<div class="message">Không thể tải dữ liệu. Vui lòng thử lại.</div>`;
-      }
+const COL = {
+  phone: 1, fbName: 2, fbLink: 3,
+  jacketQty: 5, jacketDetail: 6,
+  jerseyBlackQty: 7, jerseyBlackDetail: 8,
+  jerseyOrangeQty: 9, jerseyOrangeDetail: 10,
+  muffler: 11, keyringUni: 12, keyringScarf: 13,
+  marking: 14, amountPaid: 15, note: 17
+};
+
+function parseCSV(text){
+  const rows=[]; let cur=[], field='', inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(inQuotes){
+      if(ch==='"'){
+        if(i+1<text.length && text[i+1]==='"'){ field+='"'; i++; }
+        else inQuotes=false;
+      } else field+=ch;
+    } else {
+      if(ch==='"') inQuotes=true;
+      else if(ch===','){ cur.push(field); field=''; }
+      else if(ch==='\n'){ cur.push(field); rows.push(cur); cur=[]; field=''; }
+      else if(ch!=='\r') field+=ch;
     }
+  }
+  if(field!==''||cur.length>0){ cur.push(field); rows.push(cur); }
+  return rows;
+}
 
-    function normalizePhone(phone) {
-      let p = phone.replace(/\D/g, "");
-      if (p.startsWith("84")) return "0" + p.slice(2);
-      if (p.startsWith("0084")) return "0" + p.slice(4);
-      if (p.startsWith("+84")) return "0" + p.slice(3);
-      return p;
-    }
+function normalizePhone(s){
+  let digits = (s||'').replace(/\D/g,'');
+  if((s||'').startsWith('+84')) digits = '0'+digits.slice(2);
+  else if(digits.startsWith('84')) digits = '0'+digits.slice(2);
+  else if(digits.startsWith('0084')) digits = '0'+digits.slice(4);
+  else if(digits.length===9) digits = '0'+digits;
+  return digits;
+}
+function htmlEscape(s){ return (s||'').replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
-    function searchOrder() {
-      const phoneInput = document.getElementById("phone").value.trim();
-      const phone = normalizePhone(phoneInput);
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
+async function loadAndSearch(phoneRaw){
+  const root=document.getElementById('result');
+  root.innerHTML='<div class="small">Đang tải dữ liệu...</div>';
+  try {
+    const resp=await fetch(CSV_URL+'&_ts='+Date.now());
+    const txt=await resp.text();
+    const rows=parseCSV(txt).slice(1);
+    const target=normalizePhone(phoneRaw);
+    const matches=rows.filter(r=>normalizePhone(r[COL.phone])===target);
+    if(matches.length===0){ root.innerHTML='<div class="small">Không tìm thấy đơn nào</div>'; return; }
+    let out='';
+    matches.forEach(r=>{
+      out+=`<div class="card" style="margin-top:16px">
+        <div class="name">${r[COL.fbLink]?`<a href="${htmlEscape(r[COL.fbLink])}" target="_blank">${htmlEscape(r[COL.fbName])}</a>`:htmlEscape(r[COL.fbName])}</div>
+        <div class="small">SĐT: ${htmlEscape(r[COL.phone])}</div>
+        <div class="details">`;
+      if(r[COL.jacketQty]) out+=`<div class="line"><div class="label">Jacket</div><div class="value">${r[COL.jacketQty]} - ${htmlEscape(r[COL.jacketDetail])}</div></div>`;
+      if(r[COL.jerseyBlackQty]) out+=`<div class="line"><div class="label">Jersey Đen</div><div class="value">${r[COL.jerseyBlackQty]} - ${htmlEscape(r[COL.jerseyBlackDetail])}</div></div>`;
+      if(r[COL.jerseyOrangeQty]) out+=`<div class="line"><div class="label">Jersey Cam</div><div class="value">${r[COL.jerseyOrangeQty]} - ${htmlEscape(r[COL.jerseyOrangeDetail])}</div></div>`;
+      if(r[COL.muffler]) out+=`<div class="line"><div class="label">Muffler</div><div class="value">${htmlEscape(r[COL.muffler])}</div></div>`;
+      if(r[COL.keyringUni]) out+=`<div class="line"><div class="label">Keyring Uni</div><div class="value">${htmlEscape(r[COL.keyringUni])}</div></div>`;
+      if(r[COL.keyringScarf]) out+=`<div class="line"><div class="label">Keyring Khăn</div><div class="value">${htmlEscape(r[COL.keyringScarf])}</div></div>`;
+      if(r[COL.marking]) out+=`<div class="line"><div class="label">Marking lẻ</div><div class="value">${htmlEscape(r[COL.marking])}</div></div>`;
+      if(r[COL.amountPaid]) out+=`<div class="line"><div class="label">Đã chuyển</div><div class="value">${htmlEscape(r[COL.amountPaid])}</div></div>`;
+      if(r[COL.note]) out+=`<div class="line"><div class="label">Ghi chú</div><div class="value">${htmlEscape(r[COL.note])}</div></div>`;
+      out+='</div></div>';
+    });
+    root.innerHTML=out;
+  } catch(e){
+    root.innerHTML='<div class="small">Lỗi tải dữ liệu: '+htmlEscape(e.message)+'</div>';
+  }
+}
 
-      if (!phone) {
-        resultsDiv.innerHTML = `<div class="message">⚠️ Vui lòng nhập số điện thoại.</div>`;
-        return;
-      }
-
-      if (data.length === 0) {
-        resultsDiv.innerHTML = `<div class="message">⚠️ Dữ liệu chưa tải. Nhấn "Refresh Data" để tải lại.</div>`;
-        return;
-      }
-
-      const orders = data.filter((row, idx) => idx > 0 && normalizePhone(row[1]) === phone);
-
-      if (orders.length === 0) {
-        resultsDiv.innerHTML = `<div class="message">❌ Không tìm thấy đơn hàng cho số ${phone}.</div>`;
-        return;
-      }
-
-      orders.forEach(row => {
-        let html = `<div class="order">
-          <h3>THÔNG TIN ĐƠN HÀNG</h3>
-          <p><strong>Facebook:</strong> <a href="${row[3]}" target="_blank">${row[2]}</a></p>`;
-
-        if (row[5]) html += `<p><strong>Số lượng Jacket:</strong> ${row[5]}</p>`;
-        if (row[6]) html += `<p><strong>Marking Jacket:</strong> ${row[6]}</p>`;
-        if (row[7]) html += `<p><strong>Số lượng Jersey đen:</strong> ${row[7]}</p>`;
-        if (row[8]) html += `<p><strong>Marking Jersey đen:</strong> ${row[8]}</p>`;
-        if (row[9]) html += `<p><strong>Số lượng Jersey cam:</strong> ${row[9]}</p>`;
-        if (row[10]) html += `<p><strong>Marking Jersey cam:</strong> ${row[10]}</p>`;
-        if (row[11]) html += `<p><strong>Muffler:</strong> ${row[11]}</p>`;
-        if (row[12]) html += `<p><strong>Keyring Uni:</strong> ${row[12]}</p>`;
-        if (row[13]) html += `<p><strong>Keyring Khăn:</strong> ${row[13]}</p>`;
-        if (row[14]) html += `<p><strong>Marking lẻ:</strong> ${row[14]}</p>`;
-        if (row[15]) html += `<p><strong>Số tiền đã chuyển:</strong> ${row[15]}</p>`;
-        if (row[17]) html += `<p><strong>Ghi chú:</strong> ${row[17]}</p>`;
-
-        html += "</div>";
-        resultsDiv.innerHTML += html;
-      });
-    }
-
-    // auto load dữ liệu khi mở web
-    loadData();
-  </script>
+document.getElementById('searchBtn').onclick=()=>loadAndSearch(document.getElementById('phoneInput').value);
+document.getElementById('clearBtn').onclick=()=>{document.getElementById('phoneInput').value='';document.getElementById('result').innerHTML='';};
+document.getElementById('refreshBtn').onclick=()=>{ if(document.getElementById('phoneInput').value) loadAndSearch(document.getElementById('phoneInput').value); };
+</script>
 </body>
 </html>
