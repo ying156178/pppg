@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>PREORDER W25 HLE - BỐNG DUNG</title>
+  <title>Tra cứu đơn hàng</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -11,108 +11,122 @@
       color: #f5f5f5;
       margin: 0;
       padding: 0;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      min-height: 100vh;
+    }
+    .container {
+      background: #1e1e1e;
+      border: 2px solid #FFD700;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+      padding: 25px;
+      width: 90%;
+      max-width: 650px;
+      text-align: center;
     }
     header {
-      padding: 20px;
-      text-align: center;
-      color: gold;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 600;
+      color: #FFD700;
+      margin-bottom: 20px;
     }
     .search-box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 20px;
-      gap: 10px;
-      width: 100%;
-      max-width: 400px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
     input[type="tel"] {
       width: 100%;
       padding: 12px;
       font-size: 1rem;
       border-radius: 8px;
-      border: 2px solid gold;
-      background: #1e1e1e;
+      border: 1px solid #FFD700;
+      background: #121212;
       color: #fff;
+      text-align: center;
     }
     button {
       padding: 10px 20px;
       border: none;
       border-radius: 8px;
-      background: gold;
+      background: #FFD700;
       color: black;
       font-weight: 600;
       cursor: pointer;
       transition: 0.3s;
     }
     button:hover {
-      background: #ffd700;
+      background: #e6c200;
     }
     .results {
-      margin: 20px;
-      width: 100%;
-      max-width: 600px;
+      margin-top: 20px;
+      text-align: left;
     }
     .order {
-      background: #1e1e1e;
-      border: 1px solid gold;
+      background: #2a2a2a;
+      border: 1px solid #FFD700;
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     }
     .order h3 {
       margin-top: 0;
       font-size: 1.2rem;
-      color: gold;
+      color: #FFD700;
     }
     .order p {
       margin: 6px 0;
     }
     a {
-      color: gold;
+      color: #FFD700;
       text-decoration: none;
     }
     a:hover {
       text-decoration: underline;
     }
-    @media (max-width: 600px) {
-      header {
-        font-size: 1.2rem;
-      }
-      .order h3 {
-        font-size: 1rem;
-      }
+    .message {
+      background: #2a2a2a;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #FFD700;
+      color: #FFD700;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <header>PREORDER W25 HLE - BỐNG DUNG</header>
-  <div class="search-box">
-    <input type="tel" id="phone" placeholder="Nhập số điện thoại" inputmode="numeric">
-    <div style="display:flex; gap:10px;">
-      <button onclick="searchOrder()">Tìm đơn</button>
-      <button onclick="loadData()">Refresh Data</button>
+  <div class="container">
+    <header>TRA CỨU ĐƠN HÀNG</header>
+    <div class="search-box">
+      <input type="tel" id="phone" placeholder="Nhập số điện thoại" inputmode="numeric">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+        <button onclick="searchOrder()">Tìm đơn</button>
+        <button onclick="loadData()">Refresh Data</button>
+      </div>
     </div>
+    <div class="results" id="results"></div>
   </div>
-  <div class="results" id="results"></div>
 
   <script>
     const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS68LmtizleGjeH66aUUo9B2YC75ye4ZjfIfjR7lCe17JPAXqisC_FKkoLtVpfsUtwvLs0yObWmIdM4/pub?gid=272659167&single=true&output=csv";
     let data = [];
 
     async function loadData() {
-      const res = await fetch(sheetUrl);
-      const text = await res.text();
-      const rows = text.split("\n").map(r => r.split(","));
-      data = rows;
-      alert("Dữ liệu đã được refresh!");
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = `<div class="message">Đang tải dữ liệu...</div>`;
+      try {
+        const res = await fetch(sheetUrl);
+        const text = await res.text();
+        const rows = text.split("\n").map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)); // tách csv an toàn
+        data = rows;
+        resultsDiv.innerHTML = `<div class="message">Dữ liệu đã được refresh thành công!</div>`;
+      } catch (e) {
+        resultsDiv.innerHTML = `<div class="message">Không thể tải dữ liệu. Vui lòng thử lại.</div>`;
+      }
     }
 
     function normalizePhone(phone) {
@@ -130,15 +144,19 @@
       resultsDiv.innerHTML = "";
 
       if (!phone) {
-        resultsDiv.innerHTML = "<p>Vui lòng nhập số điện thoại.</p>";
+        resultsDiv.innerHTML = `<div class="message">⚠️ Vui lòng nhập số điện thoại.</div>`;
         return;
       }
 
-      // cột bắt đầu từ 0 => B=1, C=2, D=3 ...
-      const orders = data.filter(row => normalizePhone(row[1]) === phone);
+      if (data.length === 0) {
+        resultsDiv.innerHTML = `<div class="message">⚠️ Dữ liệu chưa tải. Nhấn "Refresh Data" để tải lại.</div>`;
+        return;
+      }
+
+      const orders = data.filter((row, idx) => idx > 0 && normalizePhone(row[1]) === phone);
 
       if (orders.length === 0) {
-        resultsDiv.innerHTML = "<p>Không tìm thấy đơn hàng nào.</p>";
+        resultsDiv.innerHTML = `<div class="message">❌ Không tìm thấy đơn hàng cho số ${phone}.</div>`;
         return;
       }
 
@@ -165,7 +183,7 @@
       });
     }
 
-    // load khi mở trang
+    // auto load dữ liệu khi mở web
     loadData();
   </script>
 </body>
