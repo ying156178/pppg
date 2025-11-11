@@ -5,515 +5,251 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tool tính tiền doll — Wangko · PeaGonix · Peminia</title>
 
-  <!-- Montserrat -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#0f1724; /* very dark blue/near-black */
-      --card:#0b2b4a; /* deep blue card */
-      --accent:#2ea6ff; /* bright blue */
-      --muted:#8fb7d6;
-      --glass: rgba(255,255,255,0.03);
+      --blue:#1e88e5;
+      --dark:#0b1a2a;
+      --card:#112a45;
+      --accent:#3da9ff;
       --radius:14px;
-      --shadow: 0 8px 30px rgba(2,18,45,0.6);
     }
-    *{box-sizing:border-box}
-    html,body{
-      height:100%;
+    body{
       margin:0;
-      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, #071428 0%, #082336 60%, #02243b 100%);
-      color: #e8f6ff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.4;
+      font-family:'Montserrat',sans-serif;
+      background:linear-gradient(180deg,#06121f,#0a1e32 70%);
+      color:#f4f9ff;
+      min-height:100vh;
     }
-
     .container{
-      max-width:1100px;
-      margin:32px auto;
-      padding:24px;
-    }
-
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .logo{
-      width:56px;
-      height:56px;
-      border-radius:12px;
-      background: linear-gradient(135deg,var(--accent), #0a84ff);
-      box-shadow: 0 6px 20px rgba(46,166,255,0.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:700;
-      color:#02243b;
-      font-size:20px;
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px;
     }
     h1{
-      margin:0;
-      font-size:20px;
+      text-align:center;
+      color:var(--accent);
+      margin-bottom:30px;
       font-weight:700;
-      color:var(--accent);
     }
-    p.lead{ margin:0; color:var(--muted); font-size:13px; }
-
-    /* card */
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius: var(--radius);
-      padding:18px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    /* tabs */
-    .tabs{
-      display:flex;
-      gap:8px;
-      margin-bottom:16px;
-      flex-wrap:wrap;
-    }
-    .tab-btn{
-      padding:8px 14px;
-      border-radius:10px;
-      background:transparent;
-      color:var(--muted);
-      border:1px solid rgba(255,255,255,0.03);
-      cursor:pointer;
-      font-weight:600;
-      transition: all .14s ease;
-    }
-    .tab-btn.active{
-      background: linear-gradient(90deg, rgba(46,166,255,0.12), rgba(6,120,200,0.12));
-      color:var(--accent);
-      box-shadow: 0 6px 20px rgba(2,36,66,0.45);
-      border-color: rgba(46,166,255,0.18);
-    }
-
-    .tab-content{
-      margin-top:12px;
-    }
-
-    .product-grid{
+    .groups{
       display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
+      gap:20px;
     }
-
-    .product{
-      display:flex;
-      gap:16px;
-      align-items:center;
+    @media(min-width:900px){
+      .groups{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+    .group{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.3);
+    }
+    .group h2{
+      text-align:center;
+      color:var(--accent);
+      margin-top:0;
+    }
+    .option{
+      margin:14px 0;
       padding:14px;
-      border-radius:12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.02);
+      border-radius:10px;
+      background:rgba(255,255,255,0.05);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
     }
-    .prod-info{
-      flex:1;
-      min-width:0;
+    .option h3{
+      margin:0;
+      font-size:16px;
     }
-    .prod-title{ margin:0; font-size:16px; font-weight:700; color:#dff6ff; }
-    .prod-sub{ margin:6px 0 0 0; font-size:13px; color:var(--muted); }
-
-    /* quantity control */
     .qty{
       display:flex;
       align-items:center;
-      gap:8px;
-      margin-top:10px;
+      justify-content:center;
+      gap:10px;
     }
     .qty button{
-      width:38px;
-      height:38px;
-      border-radius:10px;
+      width:36px;
+      height:36px;
       border:none;
-      background:var(--glass);
+      border-radius:8px;
+      background:rgba(255,255,255,0.08);
       color:var(--accent);
       font-size:20px;
       cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow: inset 0 -4px 10px rgba(0,0,0,0.15);
     }
-    .qty input[type="number"]{
-      width:86px;
+    .qty input{
+      width:70px;
       text-align:center;
       font-size:16px;
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.04);
-      background:transparent;
-      color:inherit;
-      -moz-appearance: textfield;
-    }
-    .qty input[type="number"]::-webkit-outer-spin-button,
-    .qty input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    /* options */
-    .options{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .option{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      background:rgba(255,255,255,0.02);
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.02);
-      cursor:pointer;
-      user-select:none;
-      font-weight:600;
-      color:var(--muted);
-    }
-    .option input{ accent-color: var(--accent); transform:scale(1.15); }
-
-    /* submit row */
-    .actions{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-top:18px;
-      flex-wrap:wrap;
+      padding:8px;
+      border:none;
+      border-radius:8px;
+      background:rgba(255,255,255,0.1);
+      color:#fff;
     }
     .btn{
-      padding:10px 16px;
-      border-radius:10px;
+      display:block;
+      margin:30px auto 0;
+      padding:12px 28px;
       border:none;
-      cursor:pointer;
-      font-weight:700;
-      background: linear-gradient(90deg, var(--accent), #0a84ff);
-      color:#02243b;
-      box-shadow: 0 10px 30px rgba(9,92,148,0.25);
-    }
-    .btn.ghost{
-      background:transparent;
-      color:var(--muted);
-      border:1px solid rgba(255,255,255,0.03);
-    }
-
-    /* summary */
-    .summary{
-      margin-top:16px;
-      padding:12px;
       border-radius:12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.02);
+      font-weight:700;
+      font-size:16px;
+      color:#fff;
+      background:linear-gradient(90deg,var(--accent),#5ab2ff);
+      cursor:pointer;
+      box-shadow:0 6px 20px rgba(3,100,180,0.4);
     }
-    .sum-row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:8px 0;
-      border-bottom: 1px dashed rgba(255,255,255,0.02);
+    .summary{
+      margin-top:25px;
+      background:rgba(255,255,255,0.05);
+      border-radius:12px;
+      padding:16px;
+      text-align:center;
     }
-    .sum-row:last-child{ border-bottom:none; }
-    .muted{ color:var(--muted); font-weight:600; }
-    .big{ font-size:18px; font-weight:800; color:var(--accent); }
-
-    /* responsive */
-    @media(min-width:720px){
-      .product-grid{ grid-template-columns: 1fr 1fr; }
+    .summary h3{
+      margin:0 0 10px;
+      color:var(--accent);
     }
-    @media(min-width:1000px){
-      header{ margin-bottom:28px; }
-      .product-grid{ grid-template-columns: 1fr 1fr 1fr; }
-      .prod-info{ min-width:0; }
-      .actions{ justify-content:flex-end; }
+    .summary p{
+      margin:6px 0;
+      font-weight:600;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">D</div>
-        <div>
-          <h1>Tool tính tiền doll</h1>
-          <p class="lead">Wangko · PeaGonix · Peminia — responsive, font Montserrat, theme xanh dương</p>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div class="muted" style="font-size:12px">Phiên bản demo</div>
-        <div style="font-weight:700; color:var(--muted)">Tiền tính theo VND</div>
-      </div>
-    </header>
+    <h1>TOOL TÍNH TIỀN DOLL — WANGKO · PEAGONIX · PEMINIA</h1>
 
-    <div class="card">
-      <div class="tabs" role="tablist" aria-label="Products">
-        <button class="tab-btn active" data-tab="wangko">Wangko 20cm</button>
-        <button class="tab-btn" data-tab="peagonix">PeaGonix 20cm</button>
-        <button class="tab-btn" data-tab="peminia">Peminia 10cm</button>
-      </div>
+    <div class="groups">
 
-      <div class="tab-content">
-        <!-- WANGKO -->
-        <section id="wangko" class="product-grid" data-product="wangko">
-          <div class="product">
-            <div class="prod-info">
-              <p class="prod-title">Wangko 20cm — chọn option</p>
-              <p class="prod-sub">Giá: Doll k xương 286.000đ · Doll có xương 346.000đ · Cọc 50.000đ</p>
+      <!-- WANGKO -->
+      <div class="group" id="wangko">
+        <h2>Wangko 20cm</h2>
 
-              <div class="options" role="radiogroup" aria-label="Wangko options">
-                <label class="option">
-                  <input type="radio" name="opt-wangko" value="no-skel" checked>
-                  Doll k xương
-                </label>
-                <label class="option">
-                  <input type="radio" name="opt-wangko" value="with-skel">
-                  Doll có xương
-                </label>
-                <label class="option">
-                  <input type="radio" name="opt-wangko" value="deposit">
-                  Cọc
-                </label>
-              </div>
-
-              <div class="qty" style="margin-bottom:0">
-                <button class="dec" data-for="wangko" aria-label="Giảm">−</button>
-                <input type="number" min="0" step="1" value="0" id="qty-wangko" aria-label="Số lượng Wangko">
-                <button class="inc" data-for="wangko" aria-label="Tăng">+</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- PEAGONIX -->
-        <section id="peagonix" class="product-grid" data-product="peagonix" style="display:none">
-          <div class="product">
-            <div class="prod-info">
-              <p class="prod-title">PeaGonix 20cm — chỉ có Cọc</p>
-              <p class="prod-sub">Giá: Cọc 50.000đ</p>
-
-              <div class="options" role="radiogroup" aria-label="PeaGonix options">
-                <label class="option">
-                  <input type="radio" name="opt-peagonix" value="deposit" checked>
-                  Cọc
-                </label>
-              </div>
-
-              <div class="qty" style="margin-bottom:0">
-                <button class="dec" data-for="peagonix" aria-label="Giảm">−</button>
-                <input type="number" min="0" step="1" value="0" id="qty-peagonix" aria-label="Số lượng PeaGonix">
-                <button class="inc" data-for="peagonix" aria-label="Tăng">+</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- PEMINIA -->
-        <section id="peminia" class="product-grid" data-product="peminia" style="display:none">
-          <div class="product">
-            <div class="prod-info">
-              <p class="prod-title">Peminia 10cm — chọn option</p>
-              <p class="prod-sub">Giá: Doll k xương 277.900đ · Doll có xương 337.900đ · Cọc 50.000đ</p>
-
-              <div class="options" role="radiogroup" aria-label="Peminia options">
-                <label class="option">
-                  <input type="radio" name="opt-peminia" value="no-skel" checked>
-                  Doll k xương
-                </label>
-                <label class="option">
-                  <input type="radio" name="opt-peminia" value="with-skel">
-                  Doll có xương
-                </label>
-                <label class="option">
-                  <input type="radio" name="opt-peminia" value="deposit">
-                  Cọc
-                </label>
-              </div>
-
-              <div class="qty" style="margin-bottom:0">
-                <button class="dec" data-for="peminia" aria-label="Giảm">−</button>
-                <input type="number" min="0" step="1" value="0" id="qty-peminia" aria-label="Số lượng Peminia">
-                <button class="inc" data-for="peminia" aria-label="Tăng">+</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div class="actions">
-          <button class="btn" id="calcBtn" title="Tính tổng">Submit — Tính tổng</button>
-          <button class="btn ghost" id="resetBtn" title="Đặt lại">Reset</button>
-        </div>
-
-        <div class="summary" id="summary" aria-live="polite" style="display:none">
-          <div class="sum-row">
-            <div class="muted">Wangko 20cm</div>
-            <div id="out-wangko" class="big">0 ₫</div>
-          </div>
-          <div class="sum-row">
-            <div class="muted">PeaGonix 20cm</div>
-            <div id="out-peagonix" class="big">0 ₫</div>
-          </div>
-          <div class="sum-row">
-            <div class="muted">Peminia 10cm</div>
-            <div id="out-peminia" class="big">0 ₫</div>
-          </div>
-
-          <div class="sum-row" style="margin-top:8px">
-            <div style="font-weight:800">Tổng cần trả</div>
-            <div id="out-total" class="big" style="font-size:20px">0 ₫</div>
+        <div class="option">
+          <h3>Doll không xương — 286.000đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="286000">
+            <button class="inc">+</button>
           </div>
         </div>
 
+        <div class="option">
+          <h3>Doll có xương — 346.000đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="346000">
+            <button class="inc">+</button>
+          </div>
+        </div>
+
+        <div class="option">
+          <h3>Cọc — 50.000đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="50000">
+            <button class="inc">+</button>
+          </div>
+        </div>
       </div>
+
+      <!-- PEAGONIX -->
+      <div class="group" id="peagonix">
+        <h2>PeaGonix 20cm</h2>
+
+        <div class="option">
+          <h3>Cọc — 50.000đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="50000">
+            <button class="inc">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PEMINIA -->
+      <div class="group" id="peminia">
+        <h2>Peminia 10cm</h2>
+
+        <div class="option">
+          <h3>Doll không xương — 277.900đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="277900">
+            <button class="inc">+</button>
+          </div>
+        </div>
+
+        <div class="option">
+          <h3>Doll có xương — 337.900đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="337900">
+            <button class="inc">+</button>
+          </div>
+        </div>
+
+        <div class="option">
+          <h3>Cọc — 50.000đ</h3>
+          <div class="qty">
+            <button class="dec">−</button>
+            <input type="number" min="0" value="0" data-price="50000">
+            <button class="inc">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="calcBtn">Tính tổng</button>
+
+    <div class="summary" id="summary" style="display:none">
+      <h3>Kết quả</h3>
+      <p id="wangkoTotal">Wangko: 0 ₫</p>
+      <p id="peagonixTotal">PeaGonix: 0 ₫</p>
+      <p id="peminiaTotal">Peminia: 0 ₫</p>
+      <hr style="opacity:0.2">
+      <p id="allTotal" style="font-size:18px;color:var(--accent)">Tổng cộng: 0 ₫</p>
     </div>
   </div>
 
   <script>
-    // Pricing data (VND)
-    const PRICES = {
-      deposit: 50000,
-      wangko: {
-        "no-skel": 286000,
-        "with-skel": 346000,
-        "deposit": 50000
-      },
-      peagonix: {
-        "deposit": 50000
-      },
-      peminia: {
-        "no-skel": 277900,
-        "with-skel": 337900,
-        "deposit": 50000
-      }
-    };
+    const fmt = n => new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
 
-    // Helper: format VND
-    const fmt = (n) => {
-      // Ensure integer
-      const v = Math.round(n);
-      return new Intl.NumberFormat('vi-VN').format(v) + ' ₫';
-    };
-
-    // Tabs
-    document.querySelectorAll('.tab-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const t = btn.getAttribute('data-tab');
-        document.querySelectorAll('[data-product]').forEach(sec=>{
-          sec.style.display = sec.getAttribute('data-product') === t ? '' : 'none';
-        });
+    document.querySelectorAll('.inc').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const input = btn.parentElement.querySelector('input');
+        input.value = Number(input.value) + 1;
+      });
+    });
+    document.querySelectorAll('.dec').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const input = btn.parentElement.querySelector('input');
+        input.value = Math.max(0, Number(input.value) - 1);
       });
     });
 
-    // Qty controls
-    function setupQtyControls(){
-      document.querySelectorAll('.inc').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          const key = b.dataset.for;
-          const el = document.querySelector('#qty-' + key);
-          el.value = Math.max(0, parseInt(el.value||0) + 1);
+    document.getElementById('calcBtn').addEventListener('click',()=>{
+      const groups = ['wangko','peagonix','peminia'];
+      let grand = 0;
+      groups.forEach(g=>{
+        let subtotal = 0;
+        document.querySelectorAll('#'+g+' input[type="number"]').forEach(inp=>{
+          subtotal += inp.value * inp.dataset.price;
         });
+        grand += subtotal;
+        document.getElementById(g+'Total').textContent = g.charAt(0).toUpperCase()+g.slice(1)+': '+fmt(subtotal);
       });
-      document.querySelectorAll('.dec').forEach(b=>{
-        b.addEventListener('click', ()=>{
-          const key = b.dataset.for;
-          const el = document.querySelector('#qty-' + key);
-          el.value = Math.max(0, parseInt(el.value||0) - 1);
-        });
-      });
-
-      // Ensure non-negative integers
-      ['wangko','peagonix','peminia'].forEach(k=>{
-        const el = document.querySelector('#qty-' + k);
-        el.addEventListener('input', ()=>{
-          let v = el.value.replace(/[^\d]/g,'');
-          if (v === '') v = '0';
-          el.value = Math.max(0, Math.floor(Number(v)));
-        });
-      });
-    }
-    setupQtyControls();
-
-    // Compute total for a single group
-    function computeGroup(productKey){
-      let qtyEl = document.querySelector('#qty-' + productKey);
-      let qty = Math.max(0, Math.floor(Number(qtyEl.value || 0)));
-      let selectedOpt;
-      if (productKey === 'wangko'){
-        selectedOpt = document.querySelector('input[name="opt-wangko"]:checked').value;
-        const price = PRICES.wangko[selectedOpt] ?? PRICES.deposit;
-        return qty * price;
-      } else if (productKey === 'peagonix'){
-        selectedOpt = document.querySelector('input[name="opt-peagonix"]:checked').value;
-        const price = PRICES.peagonix[selectedOpt] ?? PRICES.deposit;
-        return qty * price;
-      } else if (productKey === 'peminia'){
-        selectedOpt = document.querySelector('input[name="opt-peminia"]:checked').value;
-        const price = PRICES.peminia[selectedOpt] ?? PRICES.deposit;
-        return qty * price;
-      }
-      return 0;
-    }
-
-    // Buttons
-    document.getElementById('calcBtn').addEventListener('click', ()=>{
-      const w = computeGroup('wangko');
-      const p = computeGroup('peagonix');
-      const pm = computeGroup('peminia');
-      const total = Math.round(w + p + pm);
-
-      document.getElementById('out-wangko').textContent = fmt(w);
-      document.getElementById('out-peagonix').textContent = fmt(p);
-      document.getElementById('out-peminia').textContent = fmt(pm);
-      document.getElementById('out-total').textContent = fmt(total);
-
-      // show summary
-      const s = document.getElementById('summary');
-      s.style.display = '';
-      // smooth scroll to summary on small screens
-      s.scrollIntoView({behavior:'smooth', block:'center'});
+      document.getElementById('allTotal').textContent = 'Tổng cộng: '+fmt(grand);
+      document.getElementById('summary').style.display = 'block';
+      document.getElementById('summary').scrollIntoView({behavior:'smooth'});
     });
-
-    document.getElementById('resetBtn').addEventListener('click', ()=>{
-      // reset inputs
-      document.querySelectorAll('input[type="number"]').forEach(i=>i.value='0');
-      // reset radios to defaults
-      document.querySelector('input[name="opt-wangko"][value="no-skel"]').checked = true;
-      document.querySelector('input[name="opt-peagonix"][value="deposit"]').checked = true;
-      document.querySelector('input[name="opt-peminia"][value="no-skel"]').checked = true;
-
-      // hide summary
-      const s = document.getElementById('summary');
-      s.style.display = 'none';
-    });
-
-    // Accessibility: allow pressing Enter in an input to trigger calc
-    document.querySelectorAll('input[type="number"]').forEach(inp=>{
-      inp.addEventListener('keydown', (e)=>{
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          document.getElementById('calcBtn').click();
-        }
-      });
-    });
-
-    // init: nothing shown
   </script>
 </body>
 </html>
