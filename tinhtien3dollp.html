@@ -61,6 +61,7 @@
       display:flex;
       flex-direction:column;
       gap:10px;
+      align-items: center;
     }
     .option h3{
       margin:0;
@@ -91,6 +92,15 @@
       border-radius:8px;
       background:rgba(255,255,255,0.1);
       color:#fff;
+    }
+    .qty input::-webkit-outer-spin-button,
+    .qty input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .qty input[type=number] {
+      -moz-appearance: textfield;
     }
     .btn{
       display:block;
