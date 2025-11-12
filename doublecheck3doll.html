@@ -14,13 +14,7 @@
       --bg-card: #132a53;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Montserrat", sans-serif;
-    }
-
+    * { box-sizing: border-box; margin:0; padding:0; font-family:"Montserrat", sans-serif; }
     body {
       background: linear-gradient(135deg, #0b1e3f, #1e3a8a);
       color: var(--text-light);
@@ -32,137 +26,45 @@
       padding: 2rem;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
-      color: #93c5fd;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    h1 { text-align:center; font-size:1.8rem; margin-bottom:1.5rem; color:#93c5fd; text-transform:uppercase; letter-spacing:1px; }
 
     .search-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: var(--bg-card);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      width: 100%;
-      max-width: 500px;
+      display:flex; flex-direction:column; align-items:center;
+      background: var(--bg-card); padding:2rem; border-radius:1rem; box-shadow:0 4px 20px rgba(0,0,0,0.4);
+      width:100%; max-width:500px;
     }
 
     .search-box input {
-      padding: 0.75rem 1rem;
-      border-radius: 0.5rem;
-      border: none;
-      outline: none;
-      width: 100%;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      background: #1e3a8a;
-      color: white;
+      padding:0.75rem 1rem; border-radius:0.5rem; border:none; outline:none;
+      width:100%; font-size:1rem; margin-bottom:1rem; background:#1e3a8a; color:white;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 1rem;
-      width: 100%;
-    }
-
+    .btn-group { display:flex; gap:1rem; width:100%; }
     button {
-      flex: 1;
-      padding: 0.75rem;
-      background: var(--blue-accent);
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
+      flex:1; padding:0.75rem; background: var(--blue-accent); color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600; transition:0.3s;
     }
+    button:hover { background: var(--blue-light); }
 
-    button:hover {
-      background: var(--blue-light);
-    }
+    .result { margin-top:2rem; width:100%; max-width:900px; }
 
-    .result {
-      margin-top: 2rem;
-      width: 100%;
-      max-width: 900px;
-    }
-
-    .fb-name a {
-      color: var(--blue-light);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .fb-name a:hover {
-      text-decoration: underline;
-    }
+    .fb-name a { color: var(--blue-light); text-decoration:none; font-weight:600; }
+    .fb-name a:hover { text-decoration:underline; }
 
     .tabs {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-top: 1.5rem;
-      flex-wrap: wrap;
+      display:flex; justify-content:space-between; gap:0.5rem; margin-top:1.5rem; flex-wrap:wrap;
     }
-
     .tab {
-      flex: 1;
-      text-align: center;
-      background: #1e3a8a;
-      color: #bfdbfe;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: 600;
-      min-width: 100px;
+      flex:1; text-align:center; background:#1e3a8a; color:#bfdbfe; padding:0.75rem; border-radius:0.5rem; cursor:pointer; transition:0.3s; font-weight:600; min-width:100px;
     }
+    .tab.active { background: var(--blue-light); color:#0b1e3f; }
+    .tab:hover { background:#3b82f6; }
 
-    .tab.active {
-      background: var(--blue-light);
-      color: #0b1e3f;
-    }
+    .tab-content { display:none; background:var(--bg-card); margin-top:1rem; padding:1rem 1.5rem; border-radius:0.75rem; line-height:1.6; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+    .tab-content.active { display:block; }
 
-    .tab:hover {
-      background: #3b82f6;
-    }
+    .summary { background: var(--bg-card); margin-top:1.5rem; padding:1rem 1.5rem; border-radius:0.75rem; box-shadow:0 4px 10px rgba(0,0,0,0.3); line-height:1.6; }
 
-    .tab-content {
-      display: none;
-      background: var(--bg-card);
-      margin-top: 1rem;
-      padding: 1rem 1.5rem;
-      border-radius: 0.75rem;
-      line-height: 1.6;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .summary {
-      background: var(--bg-card);
-      margin-top: 1.5rem;
-      padding: 1rem 1.5rem;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      line-height: 1.6;
-    }
-
-    @media (max-width: 768px) {
-      .tab {
-        flex: 1 1 calc(33.33% - 0.5rem);
-        font-size: 0.9rem;
-      }
-    }
-
+    @media (max-width:768px) { .tab { flex:1 1 calc(33.33% - 0.5rem); font-size:0.9rem; } }
   </style>
 </head>
 <body>
@@ -187,50 +89,73 @@
       csvData = text.split("\n").map(r => r.split(","));
     }
 
-    async function fetchData() {
-      if (csvData.length === 0) await fetchCSV();
-      const phone = document.getElementById("phoneInput").value.trim();
-      if (!phone) {
-        alert("Vui lòng nhập số điện thoại!");
-        return;
-      }
+    function mergeStatus(rows, ttIndex) {
+      let hasCoc = false, hasHoan = false;
+      rows.forEach(r => {
+        const tt = r[ttIndex] || "";
+        if(tt.includes("Cọc")) hasCoc=true;
+        if(tt.includes("Hoàn")) hasHoan=true;
+      });
+      if(hasCoc && hasHoan) return "Chuyển khoản full";
+      return rows[0][ttIndex] || "";
+    }
 
-      const found = csvData.find(row => {
-        const phoneCol = row[1]?.replace(/\D/g, "");
+    function mergeData(rows, slIndex, optIndex, moneyIndex) {
+      let totalSL = 0;
+      let opts = [];
+      let totalMoney = 0;
+      rows.forEach(r => {
+        const sl = parseInt(r[slIndex]) || 0;
+        const money = parseFloat(r[moneyIndex]) || 0;
+        if(sl>0){
+          totalSL += sl;
+          opts.push(r[optIndex]);
+          totalMoney += money;
+        }
+      });
+      return { sl: totalSL, opt: opts.join(" | "), money: totalMoney };
+    }
+
+    async function fetchData() {
+      if(csvData.length===0) await fetchCSV();
+      const phone = document.getElementById("phoneInput").value.trim();
+      if(!phone){ alert("Vui lòng nhập số điện thoại!"); return; }
+
+      const foundRows = csvData.filter(row=>{
+        const phoneCol = row[1]?.replace(/\D/g,"");
         return phoneCol && phoneCol.endsWith(phone);
       });
 
       const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = "";
+      resultDiv.innerHTML="";
 
-      if (!found) {
-        resultDiv.innerHTML = "<p style='text-align:center;color:#fca5a5;'>Không tìm thấy thông tin.</p>";
+      if(foundRows.length===0){
+        resultDiv.innerHTML="<p style='text-align:center;color:#fca5a5;'>Không tìm thấy thông tin.</p>";
         return;
       }
 
-      const fbName = found[2];
-      const fbLink = found[3];
-      const wangko = { sl: found[5], opt: found[6], tt: found[7], money: found[8] };
-      const pean = { sl: found[9], opt: found[10], tt: found[11], money: found[12] };
-      const peminia = { sl: found[13], opt: found[14], tt: found[15], money: found[16] };
-      const total = found[17];
-      const note = found[19];
+      const firstRow = foundRows[0];
+      const fbName = firstRow[2];
+      const fbLink = firstRow[3];
 
-      // xử lý tình trạng logic: nếu có "Cọc 50k/bé" + "Hoàn cọc" cùng SDT => thành "Chuyển khoản full"
-      [wangko, pean, peminia].forEach(opt => {
-        if (opt.tt?.includes("Cọc") && opt.tt?.includes("Hoàn")) opt.tt = "Chuyển khoản full";
-      });
+      const wangkoStatus = mergeStatus(foundRows, 7);
+      const peanStatus = mergeStatus(foundRows, 11);
+      const peminiaStatus = mergeStatus(foundRows, 15);
 
-      let tabs = [];
-      if (wangko.sl && wangko.sl !== "0") tabs.push({ name: "Wangko", data: wangko });
-      if (pean.sl && pean.sl !== "0") tabs.push({ name: "PeanGonix", data: pean });
-      if (peminia.sl && peminia.sl !== "0") tabs.push({ name: "Peminia", data: peminia });
+      const wangko = mergeData(foundRows,5,6,8); wangko.tt = wangkoStatus;
+      const pean = mergeData(foundRows,9,10,12); pean.tt = peanStatus;
+      const peminia = mergeData(foundRows,13,14,16); peminia.tt = peminiaStatus;
 
-      const tabButtons = tabs.map((t, i) =>
-        `<div class="tab ${i===0?"active":""}" onclick="showTab(${i})">${t.name}</div>`
-      ).join("");
+      const total = foundRows.reduce((acc,r)=> acc + (parseFloat(r[17])||0),0);
+      const note = firstRow[19];
 
-      const tabContents = tabs.map((t, i) => `
+      let tabs=[];
+      if(wangko.sl>0) tabs.push({name:"Wangko", data:wangko});
+      if(pean.sl>0) tabs.push({name:"PeanGonix", data:pean});
+      if(peminia.sl>0) tabs.push({name:"Peminia", data:peminia});
+
+      const tabButtons = tabs.map((t,i)=> `<div class="tab ${i===0?"active":""}" onclick="showTab(${i})">${t.name}</div>`).join("");
+      const tabContents = tabs.map((t,i)=>`
         <div class="tab-content ${i===0?"active":""}" id="tab-${i}">
           <p><strong>Số lượng:</strong> ${t.data.sl}</p>
           <p><strong>Option:</strong> ${t.data.opt}</p>
@@ -239,7 +164,7 @@
         </div>
       `).join("");
 
-      resultDiv.innerHTML = `
+      resultDiv.innerHTML=`
         <div class="fb-name" style="text-align:center;margin-top:2rem;">
           <a href="${fbLink}" target="_blank">${fbName}</a>
         </div>
@@ -252,76 +177,16 @@
       `;
     }
 
-    function showTab(index) {
-      document.querySelectorAll(".tab").forEach((t, i) => {
-        t.classList.toggle("active", i === index);
-      });
-      document.querySelectorAll(".tab-content").forEach((c, i) => {
-        c.classList.toggle("active", i === index);
-      });
+    function showTab(index){
+      document.querySelectorAll(".tab").forEach((t,i)=> t.classList.toggle("active", i===index));
+      document.querySelectorAll(".tab-content").forEach((c,i)=> c.classList.toggle("active", i===index));
     }
 
-    function refreshData() {
-      csvData = [];
-      document.getElementById("result").innerHTML = "";
+    function refreshData(){
+      csvData=[];
+      document.getElementById("result").innerHTML="";
       alert("Dữ liệu đã được làm mới!");
     }
-    function mergeStatus(rows, dollIndex, ttIndex) {
-      let hasCoc = false, hasHoan = false;
-      rows.forEach(r => {
-        const tt = r[ttIndex] || "";
-        if(tt.includes("Cọc")) hasCoc = true;
-        if(tt.includes("Hoàn")) hasHoan = true;
-    });
-    if(hasCoc && hasHoan) return "Chuyển khoản full";
-    return rows[0][ttIndex] || ""; // nếu không có cả hai thì giữ giá trị dòng đầu
-    }
-    async function fetchData() {
-      if(csvData.length === 0) await fetchCSV();
-      const phone = document.getElementById("phoneInput").value.trim();
-      if(!phone) { alert("Vui lòng nhập số điện thoại!"); return; }
-
-  // Lấy tất cả dòng cùng SDT
-      const foundRows = csvData.filter(row => {
-      const phoneCol = row[1]?.replace(/\D/g, "");
-      return phoneCol && phoneCol.endsWith(phone);
-  });
-
-      const resultDiv = document.getElementById("result");
-      resultDiv.innerHTML = "";
-
-      if(foundRows.length === 0) {
-      resultDiv.innerHTML = "<p style='text-align:center;color:#fca5a5;'>Không tìm thấy thông tin.</p>";
-      return;
-  }
-      const firstRow = foundRows[0];
-    const fbName = firstRow[2];
-    const fbLink = firstRow[3];
-
-  // Wangko = f,g,h,i => col 5,6,7,8
-    const wangkoStatus = mergeStatus(foundRows, 5, 7);
-    const peanStatus = mergeStatus(foundRows, 9, 11);
-    const peminiaStatus = mergeStatus(foundRows, 13, 15);
-
-  // Gộp số lượng, option, tiền nếu nhiều dòng
-    function mergeData(rows, slIndex, optIndex, moneyIndex) {
-      let totalSL = 0;
-      let opts = [];
-      let totalMoney = 0;
-      rows.forEach(r => {
-        const sl = parseInt(r[slIndex]) || 0;
-        const money = parseFloat(r[moneyIndex]) || 0;
-        if(sl > 0){
-          totalSL += sl;
-          opts.push(r[optIndex]);
-          totalMoney += money;
-      }
-    });
-      return { sl: totalSL, opt: opts.join(" | "), money: totalMoney };
-  }
-    const wangko = mergeData(foundRows,5,6,8); wangko.tt = wangkoStatus;
-    const pean = mergeData(foundRows,9,10,12); pean.tt = peanStatus;
-    const peminia = mergeData(foundRows,13,14,16); peminia.tt = peminiaStatus;
   </script>
 </body>
 </html>
