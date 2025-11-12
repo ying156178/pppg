@@ -74,6 +74,11 @@ async function fetchCSV(){
   csvData = text.split("\n").map(r=>r.split(","));
 }
 
+function formatMoney(num){
+  if(!num || isNaN(num) || num===0) return "";
+  return num.toLocaleString("vi-VN");
+}
+
 function processDoll(rows, slIndex, optIndex, ttIndex, moneyIndex){
   const grouped = {};
   rows.forEach(r=>{
@@ -93,16 +98,13 @@ function processDoll(rows, slIndex, optIndex, ttIndex, moneyIndex){
     const ttFinal = (hasCoc && hasHoan) ? "Chuyển khoản full" : (group[0][ttIndex] || "");
     let slFinal=0;
     if(hasCoc && hasHoan && group.length>1){
-      // cùng option + cọc+hoàn => giữ sl dòng đầu
       slFinal = parseInt(group[0][slIndex]) || 0;
     } else {
-      // cộng tất cả số lượng
       slFinal = group.reduce((acc,r)=> acc + (parseInt(r[slIndex])||0),0);
     }
-    // nối option chỉ nếu có nhiều option khác nhau
-    const optFinal = opt;
+    if(slFinal === 0) return; // lọc option =0
     const moneyFinal = group.reduce((acc,r)=> acc + (parseFloat(r[moneyIndex])||0),0);
-    result.push({sl: slFinal, opt: optFinal, tt: ttFinal, money: moneyFinal});
+    result.push({sl: slFinal, opt: opt, tt: ttFinal, money: moneyFinal});
   });
   return result;
 }
@@ -116,6 +118,7 @@ async function fetchData(){
     const phoneCol = r[1]?.replace(/\D/g,"");
     return phoneCol && phoneCol.endsWith(phone);
   });
+
   const resultDiv = document.getElementById("result");
   resultDiv.innerHTML="";
   if(foundRows.length===0){
@@ -146,7 +149,7 @@ async function fetchData(){
         <p><strong>Số lượng:</strong> ${d.sl}</p>
         <p><strong>Option:</strong> ${d.opt}</p>
         <p><strong>Tình trạng:</strong> ${d.tt}</p>
-        <p><strong>Số tiền đã chuyển cho ${t.name}:</strong> ${d.money}</p>
+        ${formatMoney(d.money) ? `<p><strong>Số tiền đã chuyển cho ${t.name}:</strong> ${formatMoney(d.money)}</p>` : ""}
         <hr style="border-color:#1e3a8a;">
       `).join("")}
     </div>`;
@@ -159,7 +162,7 @@ async function fetchData(){
     <div class="tabs">${tabButtons}</div>
     ${tabContents}
     <div class="summary">
-      <p><strong>Tổng số tiền đã chuyển khoản:</strong> ${totalMoney}</p>
+      ${formatMoney(totalMoney) ? `<p><strong>Tổng số tiền đã chuyển khoản:</strong> ${formatMoney(totalMoney)}</p>` : ""}
       <p><strong>Note:</strong> ${note || "Không có"}</p>
     </div>
   `;
