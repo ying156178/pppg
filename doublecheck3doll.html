@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>THÔNG TIN ĐƠN DOLL WANGKO PEAGONIX PEMINIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#002f4b; /* deep ocean */
+      --bg2:#006494; /* lighter */
+      --card:#e9f6ff;
+      --accent:#00a3d9;
+      --text:#032b3a;
+    }
+    *{box-sizing:border-box;font-family: 'Montserrat', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    body{margin:0;min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--card);padding:28px}
+    .wrap{max-width:980px;margin:0 auto;background:rgba(255,255,255,0.03);border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+    header{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+    h1{font-size:18px;margin:0;color:var(--card);letter-spacing:0.4px}
+    p.lead{margin:0;color:rgba(255,255,255,0.8);font-size:13px}
+
+    .controls{display:flex;gap:8px;align-items:center;margin:14px 0}
+    input[type=tel]{flex:1;padding:10px 12px;border-radius:8px;border:none;outline:none;font-size:15px;background:rgba(255,255,255,0.06);color:var(--card)}
+    button{padding:10px 14px;border-radius:8px;border:none;background:var(--accent);color:white;font-weight:600;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.12)}
+
+    .result{margin-top:18px;color:var(--text)}
+    .heading{background:linear-gradient(90deg, rgba(0,163,217,0.15), rgba(0,163,217,0.05));padding:12px;border-radius:10px;color:var(--card);display:flex;align-items:center;justify-content:space-between}
+    .heading h2{margin:0;font-size:15px}
+
+    .tabs{display:flex;gap:10px;margin-top:12px}
+    .tab{flex:1;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;min-height:120px}
+    .tab h3{margin:0 0 6px 0;font-size:14px;color:var(--card)}
+    .field{font-size:13px;margin:6px 0;color:var(--card)}
+    .muted{color:rgba(255,255,255,0.75);font-size:13px}
+
+    /* mobile: show tabs as select */
+    .tabbar{display:none;margin-top:12px}
+    .tab-select{width:100%;padding:10px;border-radius:8px;border:none}
+
+    .summary{margin-top:16px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.02)}
+    .note{white-space:pre-wrap}
+
+    .hidden{display:none}
+    a.fb{color:var(--accent);text-decoration:none;font-weight:600}
+
+    @media(max-width:800px){
+      .tabs{display:none}
+      .tabbar{display:block}
+      .wrap{padding:14px}
+      header{flex-direction:column;align-items:flex-start;gap:6px}
+      .heading{flex-direction:column;align-items:flex-start;gap:8px}
+    }
+
+    /* nice table for amounts */
+    .amount{font-size:16px;font-weight:700;color:var(--card)}
+    .empty{padding:20px;text-align:center;color:rgba(255,255,255,0.7)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>THÔNG TIN ĐƠN DOLL WANGKO PEAGONIX PEMINIA</h1>
+        <p class="lead">Tra cứu theo 9 số cuối của số điện thoại. Nhập số (chỉ số), nhấn "Tra cứu" hoặc nhấn "Refresh" để cập nhật dữ liệu.</p>
+      </div>
+    </header>
+
+    <div class="controls">
+      <input id="phoneInput" type="tel" inputmode="numeric" placeholder="Nhập 9 số cuối (hoặc nhiều số)" />
+      <button id="searchBtn">Tra cứu</button>
+      <button id="refreshBtn" class="secondary">Refresh dữ liệu</button>
+    </div>
+
+    <div id="status" class="muted">Đang chờ tìm kiếm...</div>
+
+    <div id="result" class="result hidden">
+      <div class="heading">
+        <div>
+          <h2 id="fbName">—</h2>
+          <div id="fbLinkWrap"></div>
+        </div>
+        <div class="muted">Kết quả tìm kiếm</div>
+      </div>
+
+      <!-- mobile select -->
+      <div class="tabbar hidden">
+        <select id="mobileSelect" class="tab-select"></select>
+      </div>
+
+      <!-- desktop tabs -->
+      <div id="tabs" class="tabs"></div>
+
+      <div class="summary">
+        <div class="field">Tổng số tiền đã chuyển khoản: <span id="totalAmount" class="amount">0</span></div>
+        <div class="field">Note: <div id="noteText" class="note muted"></div></div>
+      </div>
+    </div>
+
+    <div id="emptyMsg" class="empty hidden">Không tìm thấy đơn hàng tương ứng với số đã nhập.</div>
+
+  </div>
+
+<script>
+// CSV source (public)
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS4oRIqtNL82DDarVOcWUq7UlXEteJgOnOD6qoyK85CVsqBSUhqNcRrzxzkjO3GD49u11YHQOgp6mPR/pub?gid=413464906&single=true&output=csv';
+let rawRows = []; // array of arrays
+let headers = [];
+
+async function fetchCsv(){
+  document.getElementById('status').textContent = 'Đang tải dữ liệu...';
+  try{
+    const res = await fetch(CSV_URL + '&_=' + Date.now());
+    const text = await res.text();
+    const parsed = parseCSV(text);
+    if(parsed.length>0){
+      headers = parsed[0].map(h=>h.trim());
+      rawRows = parsed.slice(1).filter(r=>r.some(cell=>cell!==""));
+      document.getElementById('status').textContent = `Đã tải ${rawRows.length} dòng dữ liệu.`;
+    } else {
+      document.getElementById('status').textContent = 'Không đọc được dữ liệu từ file CSV.';
+    }
+  }catch(e){
+    console.error(e);
+    document.getElementById('status').textContent = 'Lỗi khi tải dữ liệu. Kiểm tra link CSV hoặc mạng.';
+  }
+}
+
+// Simple robust CSV parser that handles quoted cells
+function parseCSV(str){
+  const rows = [];
+  let cur = [];
+  let i=0; let field=''; let inQuotes=false;
+  while(i<str.length){
+    const ch = str[i];
+    if(inQuotes){
+      if(ch==='"'){
+        if(i+1<str.length && str[i+1]==='"'){ field+='"'; i+=2; continue;} // escaped quote
+        else { inQuotes=false; i++; continue; }
+      } else { field+=ch; i++; continue; }
+    } else {
+      if(ch==='"'){ inQuotes=true; i++; continue; }
+      if(ch===','){ cur.push(field); field=''; i++; continue; }
+      if(ch==='\r'){ i++; continue; }
+      if(ch==='\n'){ cur.push(field); rows.push(cur); cur=[]; field=''; i++; continue; }
+      field+=ch; i++; continue;
+    }
+  }
+  // push last
+  if(field!=='' || inQuotes) cur.push(field);
+  if(cur.length) rows.push(cur);
+  return rows;
+}
+
+// map column letters to index (A=0)
+function colIndex(letter){ return letter.toUpperCase().charCodeAt(0)-65; }
+
+function onlyDigits(str){ return (str||'').toString().replace(/\D/g,''); }
+
+function toNumber(s){ s = (s||'').toString().replace(/[^0-9\-\.]/g,''); if(s==='') return 0; const n = parseFloat(s); return isNaN(n)?0:n; }
+
+function aggregateMatches(matches){
+  // matches: array of rows (arrays)
+  // columns mapping per user:
+  // B=1 phone, C=2 name, D=3 fb link
+  // Wangko: F=5 quantity, G=6 option, H=7 status, I=8 amount
+  // PeanGonix: J=9 qty, K=10 option, L=11 status, M=12 amount
+  // Peminia: N=13 qty, O=14 option, P=15 status, Q=16 amount
+  // R=17 total amount, T=19 note
+
+  const agg = { fbName:'', fbLink:'', wangko:{qty:0,options:new Set(),statuses:new Set(),amount:0}, peang:{qty:0,options:new Set(),statuses:new Set(),amount:0}, peminia:{qty:0,options:new Set(),statuses:new Set(),amount:0}, totalR:0, notes:new Set() };
+  for(const row of matches){
+    const phone = onlyDigits(row[1]||'');
+    const name = (row[2]||'').trim();
+    const link = (row[3]||'').trim();
+    if(name) agg.fbName = name;
+    if(link) agg.fbLink = link;
+
+    // Wangko
+    const wqty = parseInt(onlyDigits(row[5]||''))||0;
+    const wopt = (row[6]||'').trim();
+    const wstat = (row[7]||'').trim();
+    const wamt = toNumber(row[8]||'');
+    if(wqty) agg.wangko.qty += wqty;
+    if(wopt) agg.wangko.options.add(wopt);
+    if(wstat) agg.wangko.statuses.add(wstat);
+    agg.wangko.amount += wamt;
+
+    // PeanGonix
+    const pqty = parseInt(onlyDigits(row[9]||''))||0;
+    const popt = (row[10]||'').trim();
+    const pstat = (row[11]||'').trim();
+    const pamt = toNumber(row[12]||'');
+    if(pqty) agg.peang.qty += pqty;
+    if(popt) agg.peang.options.add(popt);
+    if(pstat) agg.peang.statuses.add(pstat);
+    agg.peang.amount += pamt;
+
+    // Peminia
+    const mqty = parseInt(onlyDigits(row[13]||''))||0;
+    const mopt = (row[14]||'').trim();
+    const mstat = (row[15]||'').trim();
+    const mamt = toNumber(row[16]||'');
+    if(mqty) agg.peminia.qty += mqty;
+    if(mopt) agg.peminia.options.add(mopt);
+    if(mstat) agg.peminia.statuses.add(mstat);
+    agg.peminia.amount += mamt;
+
+    // total r
+    agg.totalR += toNumber(row[17]||'');
+
+    // note col T index 19
+    const note = (row[19]||'').trim(); if(note) agg.notes.add(note);
+  }
+
+  // apply logic: if statuses contains both 'Cọc 50k/bé' and 'Hoàn cọc' -> show 'Chuyển khoản full'
+  function resolveStatus(statusSet){
+    const s = Array.from(statusSet).map(x=>x.trim()).filter(x=>x);
+    const hasDeposit = s.some(x=>/Cọc\s*50k/i.test(x));
+    const hasRefund = s.some(x=>/Hoàn\s*cọc/i.test(x));
+    if(hasDeposit && hasRefund) return 'Chuyển khoản full';
+    if(s.length===0) return 'Chưa chuyển';
+    return s.join(' / ');
+  }
+
+  agg.wangko.resolvedStatus = resolveStatus(agg.wangko.statuses);
+  agg.peang.resolvedStatus = resolveStatus(agg.peang.statuses);
+  agg.peminia.resolvedStatus = resolveStatus(agg.peminia.statuses);
+
+  agg.wangko.options = Array.from(agg.wangko.options).join(' / ');
+  agg.peang.options = Array.from(agg.peang.options).join(' / ');
+  agg.peminia.options = Array.from(agg.peminia.options).join(' / ');
+
+  agg.notes = Array.from(agg.notes).join('\n');
+  return agg;
+}
+
+function renderResult(agg){
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('emptyMsg').classList.add('hidden');
+  document.getElementById('fbName').innerHTML = agg.fbName || '—';
+  const fbWrap = document.getElementById('fbLinkWrap'); fbWrap.innerHTML = '';
+  if(agg.fbLink) {
+    const a = document.createElement('a'); a.href = agg.fbLink; a.target='_blank'; a.className='fb'; a.textContent = 'Xem Facebook'; fbWrap.appendChild(a);
+  }
+
+  // build tabs
+  const tabs = document.getElementById('tabs'); tabs.innerHTML='';
+  const mobileSel = document.getElementById('mobileSelect'); mobileSel.innerHTML='';
+  const types = [];
+  if(agg.wangko.qty>0) types.push({key:'wangko',title:'Wangko',data:agg.wangko});
+  if(agg.peang.qty>0) types.push({key:'peang',title:'PeanGonix',data:agg.peang});
+  if(agg.peminia.qty>0) types.push({key:'peminia',title:'Peminia',data:agg.peminia});
+
+  if(types.length===0){
+    // show empty
+    document.getElementById('tabs').innerHTML = '<div class="empty">Không có doll nào có số lượng lớn hơn 0.</div>';
+    document.getElementById('mobileSelect').innerHTML='';
+  } else {
+    types.forEach((t,i)=>{
+      // desktop tab
+      const tab = document.createElement('div'); tab.className='tab';
+      const h = document.createElement('h3'); h.textContent = t.title; tab.appendChild(h);
+      const f1 = document.createElement('div'); f1.className='field'; f1.innerHTML = `<strong>Số lượng:</strong> ${t.data.qty}`;
+      const f2 = document.createElement('div'); f2.className='field'; f2.innerHTML = `<strong>Option:</strong> ${t.data.options||'—'}`;
+      const f3 = document.createElement('div'); f3.className='field'; f3.innerHTML = `<strong>Tình trạng:</strong> ${t.data.resolvedStatus}`;
+      const f4 = document.createElement('div'); f4.className='field'; f4.innerHTML = `<strong>Số tiền đã chuyển cho ${t.title}:</strong> ${formatCurrency(t.data.amount)}`;
+      tab.appendChild(f1);tab.appendChild(f2);tab.appendChild(f3);tab.appendChild(f4);
+      tabs.appendChild(tab);
+
+      // mobile select option
+      const opt = document.createElement('option'); opt.value = t.key; opt.textContent = t.title; mobileSel.appendChild(opt);
+    });
+  }
+
+  // mobile behavior
+  const tabbar = document.querySelector('.tabbar');
+  if(window.matchMedia('(max-width:800px)').matches){
+    tabbar.classList.remove('hidden'); document.querySelector('.tabs').classList.add('hidden');
+    // show only selected mobile tab
+    function showMobileTab(key){
+      const t = types.find(x=>x.key===key);
+      const container = document.querySelector('.tabs'); container.innerHTML='';
+      if(!t){ container.innerHTML = '<div class="empty">Không có dữ liệu.</div>'; return; }
+      const tab = document.createElement('div'); tab.className='tab';
+      const h = document.createElement('h3'); h.textContent = t.title; tab.appendChild(h);
+      tab.appendChild(createField('Số lượng', t.data.qty));
+      tab.appendChild(createField('Option', t.data.options||'—'));
+      tab.appendChild(createField('Tình trạng', t.data.resolvedStatus));
+      tab.appendChild(createField('Số tiền đã chuyển cho '+t.title, formatCurrency(t.data.amount)));
+      container.appendChild(tab);
+      container.classList.remove('hidden');
+    }
+    mobileSel.onchange = (e)=> showMobileTab(e.target.value);
+    if(mobileSel.options.length>0) { mobileSel.selectedIndex=0; showMobileTab(mobileSel.value); }
+  } else {
+    // desktop: show tabs horizontally
+    document.querySelector('.tabbar').classList.add('hidden'); document.querySelector('.tabs').classList.remove('hidden');
+  }
+
+  document.getElementById('totalAmount').textContent = formatCurrency(agg.totalR);
+  document.getElementById('noteText').textContent = agg.notes || '—';
+}
+
+function createField(label, value){ const d = document.createElement('div'); d.className='field'; d.innerHTML = `<strong>${label}:</strong> ${value}`; return d; }
+
+function formatCurrency(n){ if(!n) return '0'; try{ return n.toLocaleString('vi-VN') + ' đ'; }catch(e){ return n; } }
+
+function searchByPhone(){
+  const input = document.getElementById('phoneInput').value;
+  const digits = onlyDigits(input);
+  if(digits.length<3){ alert('Vui lòng nhập tối thiểu 3 chữ số để tìm kiếm (khuyến nghị 9 số cuối).'); return; }
+  if(rawRows.length===0){ alert('Chưa có dữ liệu. Nhấn Refresh để tải CSV.'); return; }
+  const last9 = digits.slice(-9);
+  const matches = rawRows.filter(row => {
+    const phone = onlyDigits(row[1]||'');
+    if(!phone) return false;
+    const right9 = phone.slice(-9);
+    return right9 === last9;
+  });
+  if(matches.length===0){
+    document.getElementById('result').classList.add('hidden');
+    document.getElementById('emptyMsg').classList.remove('hidden');
+    document.getElementById('status').textContent = `Không tìm thấy ${last9}`;
+    return;
+  }
+  const agg = aggregateMatches(matches);
+  renderResult(agg);
+  document.getElementById('status').textContent = `Tìm thấy ${matches.length} dòng trùng khớp.`;
+}
+
+// events
+document.getElementById('refreshBtn').addEventListener('click', async ()=>{ await fetchCsv(); });
+document.getElementById('searchBtn').addEventListener('click', searchByPhone);
+document.getElementById('phoneInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') searchByPhone(); });
+
+// initial load
+fetchCsv();
+</script>
+</body>
+</html>
