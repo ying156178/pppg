@@ -266,6 +266,62 @@
       document.getElementById("result").innerHTML = "";
       alert("Dữ liệu đã được làm mới!");
     }
+    function mergeStatus(rows, dollIndex, ttIndex) {
+      let hasCoc = false, hasHoan = false;
+      rows.forEach(r => {
+        const tt = r[ttIndex] || "";
+        if(tt.includes("Cọc")) hasCoc = true;
+        if(tt.includes("Hoàn")) hasHoan = true;
+    });
+    if(hasCoc && hasHoan) return "Chuyển khoản full";
+    return rows[0][ttIndex] || ""; // nếu không có cả hai thì giữ giá trị dòng đầu
+    }
+    async function fetchData() {
+      if(csvData.length === 0) await fetchCSV();
+      const phone = document.getElementById("phoneInput").value.trim();
+      if(!phone) { alert("Vui lòng nhập số điện thoại!"); return; }
+
+  // Lấy tất cả dòng cùng SDT
+      const foundRows = csvData.filter(row => {
+      const phoneCol = row[1]?.replace(/\D/g, "");
+      return phoneCol && phoneCol.endsWith(phone);
+  });
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "";
+
+      if(foundRows.length === 0) {
+      resultDiv.innerHTML = "<p style='text-align:center;color:#fca5a5;'>Không tìm thấy thông tin.</p>";
+      return;
+  }
+      const firstRow = foundRows[0];
+    const fbName = firstRow[2];
+    const fbLink = firstRow[3];
+
+  // Wangko = f,g,h,i => col 5,6,7,8
+    const wangkoStatus = mergeStatus(foundRows, 5, 7);
+    const peanStatus = mergeStatus(foundRows, 9, 11);
+    const peminiaStatus = mergeStatus(foundRows, 13, 15);
+
+  // Gộp số lượng, option, tiền nếu nhiều dòng
+    function mergeData(rows, slIndex, optIndex, moneyIndex) {
+      let totalSL = 0;
+      let opts = [];
+      let totalMoney = 0;
+      rows.forEach(r => {
+        const sl = parseInt(r[slIndex]) || 0;
+        const money = parseFloat(r[moneyIndex]) || 0;
+        if(sl > 0){
+          totalSL += sl;
+          opts.push(r[optIndex]);
+          totalMoney += money;
+      }
+    });
+      return { sl: totalSL, opt: opts.join(" | "), money: totalMoney };
+  }
+    const wangko = mergeData(foundRows,5,6,8); wangko.tt = wangkoStatus;
+    const pean = mergeData(foundRows,9,10,12); pean.tt = peanStatus;
+    const peminia = mergeData(foundRows,13,14,16); peminia.tt = peminiaStatus;
   </script>
 </body>
 </html>
